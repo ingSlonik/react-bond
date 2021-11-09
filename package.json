@@ -1,0 +1,41 @@
+{
+  "name": "react-neutron",
+  "version": "0.0.1",
+  "description": "react-neutron is a framework for building cross-platform lightweight desktop apps with the React.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "example": "ts-node"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ingSlonik/react-neutron.git"
+  },
+  "keywords": [
+    "react",
+    "desktop",
+    "app",
+    "lightweight"
+  ],
+  "author": "Filip Paulů",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ingSlonik/react-neutron/issues"
+  },
+  "homepage": "https://github.com/ingSlonik/react-neutron#readme",
+  "dependencies": {
+    "find-free-port": "^2.0.0",
+    "react": "^17.0.2",
+    "react-reconciler": "^0.26.2",
+    "webview": "^1.0.0",
+    "ws": "^8.2.3"
+  },
+  "devDependencies": {
+    "@types/node": "^16.11.6",
+    "@types/react": "^17.0.34",
+    "@types/react-reconciler": "^0.26.4",
+    "@types/ws": "^8.2.0",
+    "ts-node": "^10.4.0",
+    "typescript": "^4.4.4"
+  }
+}
