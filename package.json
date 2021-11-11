@@ -2,10 +2,15 @@
   "name": "react-neutron",
   "version": "0.0.1",
   "description": "react-neutron is a framework for building cross-platform lightweight desktop apps with the React.",
-  "main": "index.js",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "example": "ts-node"
+    "example": "ts-node",
+    "build": "tsc src/index.tsx --outDir lib --target esnext --module commonjs --esModuleInterop true --jsx react --sourceMap true --declaration true",
+    "build-example": "tsc example/window.tsx --outDir example/lib --target esnext --module commonjs --esModuleInterop true --jsx react",
+    "pkg-example": "pkg --config package.json example/lib/example/window.js",
+    "pkg-hello": "pkg lib/hello.js"
   },
   "repository": {
     "type": "git",
@@ -35,7 +40,12 @@
     "@types/react": "^17.0.34",
     "@types/react-reconciler": "^0.26.4",
     "@types/ws": "^8.2.0",
+    "pkg": "^5.4.1",
     "ts-node": "^10.4.0",
     "typescript": "^4.4.4"
+  },
+  "pkg": {
+    "assets": "node_modules/webview/**/*",
+    "outputPath": "dist"
   }
 }
