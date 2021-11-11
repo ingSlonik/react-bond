@@ -1,13 +1,13 @@
 import http from "http";
-import { readFileSync } from "fs";
-import { resolve } from "path";
 
 import findFreePort from "find-free-port";
 import { WebSocket, WebSocketServer } from "ws";
 
+import { getHTML } from "./frontend";
+
 import { Child, ChildProps, Props, Container, Instance, MessageToBackend, MessageToFrontEnd } from "./types";
 
-const frontend = readFileSync(resolve(__dirname, "frontend.html"), "utf-8");
+const frontend = getHTML();
 
 const eventListener: Array<{ id: string, eventType: string, listener: (value: null | number | string) => void }> = [];
 
