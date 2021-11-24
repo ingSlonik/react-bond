@@ -1,4 +1,4 @@
-import { Props, Child} from "./types";
+import { Props, Child } from "./types";
 
 async function start() {
     const ws = await connect();
@@ -45,7 +45,19 @@ function append(ws: WebSocket, parentId: string, child: Child) {
     const element = document.createElement(child.type === "text" ? "span" : "div");
     element.id = id;
 
-    for (const key in style) element.style[key] = style[key];
+    for (const key in style) {
+        const keyLower = key.toLowerCase();
+        const value = style[key];
+
+        if (
+            typeof value === "number" &&
+            (keyLower.includes("margin") || keyLower.includes("padding") || keyLower.includes("size") || keyLower.includes("radius") || keyLower.includes("width") || keyLower.includes("height"))
+        ) {
+            element.style[key] = style[key] + "px";
+        } else {
+            element.style[key] = style[key];
+        }
+    }
     events.forEach(eventType => addListener(ws, element, eventType));
 
     if (child.props.text) element.innerText = child.props.text;
@@ -87,8 +99,10 @@ export function getHTML(): string {
             padding: 0px;
         }
         div {
+            position: relative;
             display: flex;
             flex-direction: column;
+            align-items: stretch;
         }
         #root {
             position: relative;
