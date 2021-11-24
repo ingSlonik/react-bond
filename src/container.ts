@@ -30,7 +30,7 @@ export async function createContainer(): Promise<Container> {
                 parentId: parent.id,
                 child: getChildForMessage(child),
             };
-            
+
             // Handle events
             for (const [ eventType, listener ] of Object.entries(child.props.events || {})) {
                 eventListener.push({ id: child.id, eventType, listener });
@@ -50,6 +50,17 @@ export async function createContainer(): Promise<Container> {
                 id: instance.id,
                 props: getChildProps(newProps),
             };
+
+            // Set new props in instance
+            // TODO: what about remove styles?
+            // if (newProps.style) instance.props.style = { ...instance.props.style, ...newProps.style };
+            // if (newProps.events) instance.props.events = { ...instance.props.events, ...newProps.events };
+
+            // Handle events
+            eventListener.forEach((el, i) => el.id === instance.id && eventListener.splice(i, 1));
+            for (const [ eventType, listener ] of Object.entries(newProps.events || {})) {
+                eventListener.push({ id: instance.id, eventType, listener });
+            }
 
             // console.log(message);
             ws.send(JSON.stringify(message));
@@ -85,7 +96,7 @@ function runServer(port: number): Promise<WebSocket> {
         wss.on("connection", (ws) => {
             ws.on("message", (message) => {
                 const mes = JSON.parse(message.toString("utf-8")) as MessageToBackend;
-                console.log("FE:", mes);
+                // console.log("FE:", mes);
 
                 if (mes.type === "event") {
                     eventListener
