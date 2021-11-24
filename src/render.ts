@@ -16,19 +16,19 @@ type TimeoutHandle = NodeJS.Timeout;
 type NoTimeout = -1;
 
 const reconciler = ReactReconciler<
-Type,
-Props,
-Container,
-Instance,
-TextInstance,
-SuspenseInstance,
-HydratableInstance,
-PublicInstance,
-HostContext,
-UpdatePayload,
-ChildSet,
-TimeoutHandle,
-NoTimeout
+    Type,
+    Props,
+    Container,
+    Instance,
+    TextInstance,
+    SuspenseInstance,
+    HydratableInstance,
+    PublicInstance,
+    HostContext,
+    UpdatePayload,
+    ChildSet,
+    TimeoutHandle,
+    NoTimeout
 >({
     supportsMutation: true,
     supportsPersistence: false,
