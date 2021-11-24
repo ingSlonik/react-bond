@@ -5,16 +5,14 @@ function App() {
     const [ count, setCount ] = useState(0);
 
     return <Window title="Desktop app" width={800} height={600}>
-        <View style={{ textAlign: "center" }}>
-            <Text style={{ color: "#888", fontSize: "64px" }}>Welcome</Text>
+        <View>
+            <Text style={{ color: "#888", fontSize: 64, textAlign: "center" }}>Welcome</Text>
 
-            <Pressable onPress={() => setCount(c => c + 1)}>
-                <View>
-                    <Text>Click here</Text>
-                </View>
+            <Pressable style={{ margin: 32 }} onPress={() => setCount(c => c + 1)}>
+                <Text style={{ textAlign: "center" }}>Click here</Text>
             </Pressable>
 
-            <Text>{`You clicked ${count} times.`}</Text>
+            <Text style={{ textAlign: "center" }}>{`You clicked ${count} times.`}</Text>
         </View>
     </Window>;
 }
