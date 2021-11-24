@@ -34,11 +34,11 @@ function Calculator() {
 
     return <Window title="Desktop calculator" width={274} height={444}>
         <View style={{ flexGrow: 1, overflow: "hidden", backgroundColor: "#222" }}>
-            <View>
+            <View style={{ flexGrow: 1, justifyContent: "center" }}>
                 <Text style={{ color: "#888", fontSize: 64, textAlign: "center" }}>{number}</Text>
             </View>
 
-            <View style={{ flexWrap: "wrap", flexDirection: "row" }}>
+            <View style={{ flexWrap: "wrap", flexDirection: "row", justifyContent: "space-between" }}>
                 <Button color="#444" onPress={() => setNumber("0")}>AC</Button>
                 <Button color="#444" onPress={() => setNumber(n => String(-Number(n)))}>+/-</Button>
                 <Button color="#444" onPress={() => addOperation("%")}>%</Button>
