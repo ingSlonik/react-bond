@@ -2,12 +2,6 @@
 
 react-neutron is a framework for building cross-platform lightweight desktop apps with the React.
 
-## Background
-
-This is running on native `webview` of your system.
-
-All program is running in node. That means you have full access to file system, notifications and other node packages.
-
 ## Usage
 
 ```js
@@ -25,7 +19,14 @@ Clone repository and...
 
 ```
 $ npm run example -- example/window.tsx
+$ npm run example -- example/calculator.tsx
 ```
+
+## Background
+
+This is running on native `webview` of your system.
+
+All program is running in node. That means you have full access to file system, notifications and other node packages.
 
 ### TODO
 
