@@ -8,9 +8,13 @@ react-neutron is a framework for building cross-platform lightweight desktop app
 import React from "react";
 import { render, Window, View, Text } from "react-neutron";
 
-render(<Window title="Desktop app" width={1024} height={768}>
-    <Text style={{ color: "#888", fontSize: 64 }}>Welcome</Text>
-<Window>);
+render(<Window title="Hello app" width={420} height={150}>
+    <View style={{ flexGrow: 1, justifyContent: "center" }}>
+        <Text style={{ color: "#888", fontSize: 32, textAlign: "center" }}>
+            Hello, I am react-neutorn.
+        </Text>
+    </View>
+</Window>);
 ```
 
 ## Run examples
@@ -18,7 +22,8 @@ render(<Window title="Desktop app" width={1024} height={768}>
 Clone repository and...
 
 ```
-$ npm run example -- example/window.tsx
+$ npm run example -- example/hello.tsx
+$ npm run example -- example/counter.tsx
 $ npm run example -- example/calculator.tsx
 ```
 
