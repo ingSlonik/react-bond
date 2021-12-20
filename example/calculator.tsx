@@ -39,8 +39,8 @@ function Calculator() {
 
     return <Window title="Desktop calculator" width={274} height={444}>
         <View style={{ flexGrow: 1, overflow: "hidden", backgroundColor: "#222" }}>
-            <View style={{ flexGrow: 1, justifyContent: "center" }}>
-                <Text style={{ color: "#888", fontSize: 64, textAlign: "center" }}>{number}</Text>
+            <View style={{ flexGrow: 1, justifyContent: "center", paddingRight: 16, paddingLeft: 16 }}>
+                <Text style={{ color: "#888", fontSize: 64, textAlign: "right" }}>{value.toLocaleString()}</Text>
             </View>
 
             <View style={{ flexWrap: "wrap", flexDirection: "row", justifyContent: "space-between" }}>
