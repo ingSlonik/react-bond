@@ -1,4 +1,5 @@
 import React, { ReactNode } from "react";
+import { getCSSProperties } from "../instance";
 import { LayoutStyle, ViewStyle, TextStyle } from "../types";
 
 export type PressableProps = {
@@ -7,7 +8,8 @@ export type PressableProps = {
     children: ReactNode,
 };
 
-export function Pressable({ onPress, style, ...props }: PressableProps): JSX.Element {
-    // @ts-ignore
-    return <view style={{ ...style, cursor: "pointer" }} {...props} events={{ onPress }} />;
+export function Pressable({ onPress, style, children }: PressableProps): JSX.Element {
+    const cssProperties = getCSSProperties(style);
+
+    return <div style={{ ...cssProperties, cursor: "pointer" }} onClick={onPress}>{children}</div>;
 }

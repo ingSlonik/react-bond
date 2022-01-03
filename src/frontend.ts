@@ -10,17 +10,17 @@ async function start() {
     ws.onmessage = (event) => {
         try {
             const msg = JSON.parse(event.data);
-        
+
             switch (msg.type) {
                 case "append": return append(ws, msg.parentId, msg.child);
                 case "update": return update(ws, msg.id, msg.props);
                 default:
                     throw new Error(`Unknown message type "${msg.type}".`);
-            }   
+            }
         } catch (e) {
             ws.send(JSON.stringify({
                 type: "error",
-                error: { name: e.name, message: e.message, stack: e.stack }, 
+                error: { name: e.name, message: e.message, stack: e.stack },
             }));
         }
     }
@@ -35,14 +35,14 @@ async function connect(): Promise<WebSocket> {
             setTimeout(() => connect().then(resolve), 30);
         }
     });
-} 
+}
 
 function append(ws: WebSocket, parentId: string, child: Child) {
     const id = child.id;
     const style = child.props.style;
     const events = child.props.events;
 
-    const element = document.createElement(child.type === "text" ? "span" : "div");
+    const element = document.createElement(child.type);
     element.id = id;
 
     for (const key in style) {
@@ -60,10 +60,10 @@ function append(ws: WebSocket, parentId: string, child: Child) {
     }
     events.forEach(eventType => addListener(ws, element, eventType));
 
-    if (child.props.text) element.innerText = child.props.text;
+    // if (typeof child.props.) element.innerText = child.props.text;
 
     const parent = document.getElementById(parentId);
-    if (!parent) throw new Error(`Element (parent) with id "${parentId}" doesn't exist.`)
+    if (!parent) throw new Error(`Element (parent) with id "${parentId}" doesn't exist.`);
     parent.append(element);
 }
 
@@ -75,7 +75,7 @@ function update(ws: WebSocket, id: string, props: Partial<Props>) {
     const style = props.style;
     for (const key in style) element.style[key] = style[key];
 
-    if (props.text) element.innerText = props.text;
+    // if (props.text) element.innerText = props.text;
 }
 
 function addListener(ws: WebSocket, element: HTMLElement, eventType: string) {

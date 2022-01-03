@@ -1,24 +1,33 @@
-import { ChildProcessWithoutNullStreams } from "child_process";
+import NativeWebView from "native-webview";
 
-import { ReactChild } from "react";
+import { CSSProperties, ReactChild } from "react";
+import { WindowProps as WindowPropsComponent } from "./components/Window";
 
-type Type = "window" | "view" | "text";
+type Type = "window" | "div" | "span" | "svg"; // ,...
 
 export type Container = {
-    port: number,
+    status: "starting" | "run",
     windows: Instance[],
-    append(parent: Instance, child: Instance): void,
-    update(instance: Instance, newProps: Partial<Props>),
+    // append(parent: Instance, child: Instance): void,
+    // update(instance: Instance, newProps: Partial<Props>),
 };
 
-export type Instance = {
-    windowId: string,
+export type WindowInstance = {
+    id: "root",
+    type: "window",
+    props: WindowProps,
+    webView: NativeWebView,
+    parent: null | Instance,
+    children: Instance[],
+};
+
+export type Instance = WindowInstance | {
+    // windowId: string,
     id: null | string,
-    type: Type,
+    type: Exclude<Type, "window">,
     props: Props,
     parent: null | Instance,
     children: Instance[],
-    process: null | ChildProcessWithoutNullStreams,
 };
 
 type Color = string;
@@ -140,15 +149,11 @@ export type Events = {
     onPress?: () => void,
 };
 
+export type WindowProps = Omit<WindowPropsComponent, "children">;
+
 export type Props = {
-    window?: {
-        title: string,
-        width: number,
-        height: number,    
-    },
-    style?: Style,
-    events?: Events,
-    text?: string,
+    style?: CSSProperties,
+    onClick?: () => void,
     children?: ReactChild,
 };
 

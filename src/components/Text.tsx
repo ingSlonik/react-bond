@@ -1,12 +1,14 @@
 import React, { ReactNode } from "react";
+import { getCSSProperties } from "../instance";
 import { LayoutStyle, ViewStyle, TextStyle } from "../types";
 
 export type TextProps = {
     style?: Partial<TextStyle>,
-    children: string,
+    children: ReactNode,
 };
 
-export function Text({ children, ...props }: TextProps): JSX.Element {
-    // @ts-ignore
-    return <text text={children} {...props} />;
+export function Text({ style, children }: TextProps): JSX.Element {
+    const cssProperties = getCSSProperties(style);
+
+    return <span style={cssProperties}>{children}</span>;
 }

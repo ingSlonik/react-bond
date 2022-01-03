@@ -1,6 +1,6 @@
-import http from "http";
+// import http from "http";
 
-import findFreePort from "find-free-port";
+// import findFreePort from "find-free-port";
 import { WebSocket, WebSocketServer } from "ws";
 
 import { getHTML } from "./frontend";
@@ -12,12 +12,16 @@ const frontend = getHTML();
 const eventListener: Array<{ id: string, eventType: string, listener: (value: null | number | string) => void }> = [];
 
 // TODO: run server when is window and stop when is not
-export async function createContainer(): Promise<Container> {
-    
-    const port = await getPort();
+export function createContainer(): Container {
 
     return {
-        port,
+        status: "starting",
+        windows: [],
+    };
+
+    /*
+    return {
+        status: "starting",
         windows: [],
         async append(parent, child) {
             if (parent.id === null || child.id === null)
@@ -66,8 +70,10 @@ export async function createContainer(): Promise<Container> {
             ws.send(JSON.stringify(message));
         }
     };
+    */
 }
 
+/*
 let ws: null | Promise<WebSocket> = null;
 let port: null | number = null;
 
@@ -128,3 +134,4 @@ function getChildProps(props: Partial<Props>): ChildProps {
         events: Object.keys(props.events || {}),
     }
 }
+*/

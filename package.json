@@ -29,11 +29,9 @@
   },
   "homepage": "https://github.com/ingSlonik/react-neutron#readme",
   "dependencies": {
-    "find-free-port": "^2.0.0",
+    "native-webview": "^0.1.0",
     "react": "^17.0.2",
-    "react-reconciler": "^0.26.2",
-    "webview": "^1.0.0",
-    "ws": "^8.2.3"
+    "react-reconciler": "^0.26.2"
   },
   "devDependencies": {
     "@types/node": "^16.11.6",
