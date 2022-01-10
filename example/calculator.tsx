@@ -26,7 +26,6 @@ function Calculator() {
     }
 
     function count() {
-        console.log("count", { value, numberBefore, operation })
         setNumberBefore(value);
 
         switch (operation) {
@@ -38,7 +37,7 @@ function Calculator() {
         }
     }
 
-    return <Window title="Desktop calculator" width={274} height={444}>
+    return <Window title="Desktop calculator" width={274} height={444} resizable={false}>
         <View style={{ flexGrow: 1, overflow: "hidden", backgroundColor: "#222" }}>
             <View style={{ flexGrow: 1, justifyContent: "center", paddingRight: 16, paddingLeft: 16 }}>
                 <Text style={{ color: "#888", fontSize: 64, textAlign: "right" }}>{value.toLocaleString()}</Text>
