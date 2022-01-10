@@ -1,15 +1,15 @@
 // import http from "http";
 
 // import findFreePort from "find-free-port";
-import { WebSocket, WebSocketServer } from "ws";
+// import { WebSocket, WebSocketServer } from "ws";
 
-import { getHTML } from "./frontend";
+// import { getHTML } from "./frontend";
 
-import { Child, ChildProps, Props, Container, Instance, MessageToBackend, MessageToFrontEnd } from "./types";
+import { Container } from "./types";
 
-const frontend = getHTML();
+// const frontend = getHTML();
 
-const eventListener: Array<{ id: string, eventType: string, listener: (value: null | number | string) => void }> = [];
+// const eventListener: Array<{ id: string, eventType: string, listener: (value: null | number | string) => void }> = [];
 
 // TODO: run server when is window and stop when is not
 export function createContainer(): Container {
