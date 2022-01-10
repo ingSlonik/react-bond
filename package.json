@@ -1,6 +1,6 @@
 {
   "name": "react-neutron",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "react-neutron is a framework for building cross-platform lightweight desktop apps with the React.",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
