@@ -1,7 +1,7 @@
 import NativeWebView from "native-webview";
 
-import { CSSProperties, ReactChild } from "react";
-import { WindowProps as WindowPropsComponent } from "./components/Window";
+import { CSSProperties, ReactNode } from "react";
+import { WindowProps as WindowPropsComponent, WindowType as Window } from "./components/Window";
 
 type Type = "window" | "div" | "span" | "svg"; // ,...
 
@@ -16,7 +16,7 @@ export type WindowInstance = {
     id: "root",
     type: "window",
     props: WindowProps,
-    webView: NativeWebView,
+    window: Window,
     parent: null | Instance,
     children: Instance[],
 };
@@ -151,43 +151,11 @@ export type Events = {
 
 export type WindowProps = Omit<WindowPropsComponent, "children">;
 
+
 export type Props = {
     style?: CSSProperties,
     onClick?: () => void,
-    children?: ReactChild,
+    innerText?: string,
 };
 
-export type Child = {
-    id: string,
-    type: Type,
-    props: ChildProps,
-}
-
-export type ChildProps = {
-    style: Partial<Style>,
-    text: null | string,
-    events: string[],
-};
-
-export type MessageToFrontEnd = {
-    type: "append",
-    parentId: string,
-    child: Child,
-} | {
-    type: "update",
-    id: string,
-    props: ChildProps,
-};
-
-export type MessageToBackend = {
-    type: "message",
-    message: string,
-} | {
-    type: "error",
-    error: Error,
-} | {
-    type: "event",
-    id: string,
-    eventType: string,
-    value: null | number | string,
-};
+export type RenderProps = Props & { children: ReactNode };

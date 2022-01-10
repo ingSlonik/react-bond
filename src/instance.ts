@@ -1,31 +1,27 @@
 import { resolve } from "path";
-import NativeWebView from "native-webview";
+
+import { appendElement, getWindow, updateElement } from "./components/Window";
 
 import { CSSProperties } from "react";
-
 import { Instance, WindowInstance, Type, Props, WindowProps, Container, LayoutStyle, ViewStyle, TextStyle } from "./types";
 
-
 export function createWindowInstance(type: "window", props: WindowProps, rootContainer: Container): WindowInstance {
-    const webView = new NativeWebView({
-        title: props.title,
-        size: { width: props.width, height: props.width },
-        windowIcon: props.icon,
-        getPath: (nwv) => {
-            const path = resolve(__dirname, "..", "webview", nwv.replace("nwv://", ""));
-            console.log(path);
+    const window = getWindow(
+        props,
+        src => {
+            const path = resolve(__dirname, "..", "webview", src);
             return path;
         },
-        onMessage: (message) => console.log(message),
-    });
+        (message) => console.log(message),
+    )
 
-    webView.run().then(() => console.log("TODO: Windows closed."))
+    window.run().then(() => console.log("TODO: Windows closed."))
 
     return {
         id: "root",
         type,
         props,
-        webView,
+        window,
         parent: null,
         children: [],
     };
@@ -68,16 +64,33 @@ export function finalizeInitialChildren(instance: Instance, rootContainer: Conta
 }
 
 export function appendInstance(instance: Instance) {
-    const window = getWindowInstance(instance);
-    const parent = instance.parent;
+    if (instance.type === "window") {
+        console.log("Append window");
+    } else {
+        const window = getWindowInstance(instance);
+        const id = instance.id;
+        const parent = instance.parent;
 
-    if (!parent) throw new Error("Appended instance doesn't have parent.");
+        if (!id) throw new Error("Appended instance doesn't have id.");
+        if (!parent) throw new Error("Appended instance doesn't have parent.");
+        const parentId = parent.id;
+        if (!parentId) throw new Error("Appended instance doesn't have parent.");
 
-    window.webView.eval(`append(${JSON.stringify(parent.id)})`);
+        appendElement(window.window, parentId, id, instance.type, instance.props);
+    }
 }
 
-export function updateInstance(instance: Instance, newProps: Partial<Props>, rootContainer: Container) {
-    const window = getWindowInstance(instance);
+export function updateInstance(instance: Instance, newProps: Partial<Props>, /* rootContainer: Container*/) {
+    if (instance.type === "window") {
+        console.log("Update window");
+    } else {
+        const window = getWindowInstance(instance);
+        const id = instance.id;
+
+        if (!id) throw new Error("Appended instance doesn't have id.");
+
+        updateElement(window.window, id, newProps);
+    }
 }
 
 export function getWindowInstance(child: Instance): WindowInstance {

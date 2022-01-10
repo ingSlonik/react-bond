@@ -26,6 +26,11 @@
 
 <body>
     <div id="root"></div>
+    <script>
+        window.onload = function onload(event) {
+            sendMessage({ type: "loaded" });
+        };
+    </script>
 </body>
 
 </html>

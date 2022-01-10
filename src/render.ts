@@ -3,7 +3,7 @@ import ReactReconciler from "react-reconciler";
 import { appendInitial, createInstance, createWindowInstance, finalizeInitialChildren, updateInstance } from "./instance";
 import { createContainer } from "./container";
 
-import { Type, Container, Instance, Props, WindowProps } from "./types";
+import { Type, Container, Instance, RenderProps, Props, WindowProps } from "./types";
 
 type TextInstance = Instance;
 type SuspenseInstance = Instance;
@@ -17,7 +17,7 @@ type NoTimeout = -1;
 
 const reconciler = ReactReconciler<
     Type,
-    Props,
+    RenderProps,
     Container,
     Instance,
     TextInstance,
@@ -38,7 +38,7 @@ const reconciler = ReactReconciler<
     now() {
         return new Date().getTime();
     },
-    createInstance(type, props, rootContainer, hostContext, internalHandle) {
+    createInstance(type, { children, ...props }, rootContainer, hostContext, internalHandle) {
         if (type === "window") {
             return createWindowInstance(type, props as WindowProps, rootContainer);
         } else {
@@ -51,7 +51,7 @@ const reconciler = ReactReconciler<
     },
     createTextInstance(text, rootContainer, hostContext, internalHandle) {
         if (hostContext === null) throw new Error("Create element without window?");
-        return createInstance("span", { children: text }, rootContainer);
+        return createInstance("span", { innerText: text }, rootContainer);
     },
     appendInitialChild(parentInstance, childInstance) {
         appendInitial(parentInstance, childInstance);
@@ -82,7 +82,6 @@ const reconciler = ReactReconciler<
     prepareUpdate(instance, type, oldProps, newProps, rootContainer, hostContext) {
         // TODO: performance...
         const { children, ...updatePayload } = newProps;
-        updateInstance(instance, updatePayload, rootContainer);
         return updatePayload;
     },
     resetAfterCommit(containerInfo) { },
@@ -100,9 +99,22 @@ const reconciler = ReactReconciler<
             throw new Error("You cannot add elements outside of window.")
         }
     },
-    commitMount(instance, type, props, internalInstanceHandle) { },
+    commitMount(instance, type, props, internalInstanceHandle) {
+        // console.log("commit", instance.children);
+    },
     // is is done in prepare update (I need Container for that)
-    commitUpdate(instance, updatePayload, type, oldProps, newProps, finishedWork) { },
+    commitUpdate(instance, updatePayload, type, oldProps, newProps, finishedWork) {
+        updateInstance(instance, updatePayload);
+    },
+    commitTextUpdate(textInstance, oldText, newText) {
+        if (textInstance.type === "window") {
+            throw new Error("Text instance cannot be windows.");
+        } else {
+            if (oldText !== newText) {
+                updateInstance(textInstance, { innerText: newText });
+            }
+        }
+    },
 });
 
 export function render(children: JSX.Element) {
