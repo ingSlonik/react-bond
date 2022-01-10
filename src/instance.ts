@@ -1,6 +1,6 @@
 import { resolve } from "path";
 
-import { appendElement, getWindow, updateElement } from "./components/Window";
+import { appendElement, getWindow, updateElement, updateWindow } from "./components/Window";
 
 import { CSSProperties } from "react";
 import { Instance, WindowInstance, Type, Props, WindowProps, Container, LayoutStyle, ViewStyle, TextStyle } from "./types";
@@ -82,7 +82,7 @@ export function appendInstance(instance: Instance) {
 
 export function updateInstance(instance: Instance, newProps: Partial<Props>, /* rootContainer: Container*/) {
     if (instance.type === "window") {
-        console.log("Update window");
+        updateWindow(instance.window.nwv, newProps as WindowProps);
     } else {
         const window = getWindowInstance(instance);
         const id = instance.id;
