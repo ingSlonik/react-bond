@@ -81,7 +81,10 @@ const reconciler = ReactReconciler<
     preparePortalMount(containerInfo) { },
     prepareUpdate(instance, type, oldProps, newProps, rootContainer, hostContext) {
         // TODO: performance...
-        const { children, ...updatePayload } = newProps;
+        const updatePayload = {};
+        for (const key in newProps) {
+            if (key !== "children" && newProps[key] !== oldProps[key]) updatePayload[key] = newProps[key];
+        }
         return updatePayload;
     },
     resetAfterCommit(containerInfo) { },
