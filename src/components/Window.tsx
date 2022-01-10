@@ -7,19 +7,33 @@ import { Type, Props } from "../types";
 
 export type WindowProps = {
     title: string,
-    icon: null | string,
     width: number,
     height: number,
+    icon?: null | string,
+    resizable?: boolean,
+    minSize?: {
+        width: number,
+        height: number,
+    },
+    maxSize?: {
+        width: number,
+        height: number,
+    },
+    position?: {
+        top: number,
+        left: number,
+    };
+    alwaysOnTop?: boolean,
+    decorations?: boolean,
+    fullscreen?: boolean,
+    maximized?: boolean,
+    minimized?: boolean,
     children: JSX.Element,
 };
 
-Window.defaultProps = {
-    icon: null,
-};
-
-export function Window({ children, ...props }: WindowProps): JSX.Element {
+export function Window({ children, icon = null, ...props }: WindowProps): JSX.Element {
     // @ts-ignore
-    return <window {...props}>{children}</window>;
+    return <window icon={icon} {...props}>{children}</window>;
 }
 
 // ------------ Backend -------------
@@ -45,12 +59,12 @@ export type WindowType = {
 };
 
 export function getWindow(
-    { title, icon, width, height }: Omit<WindowProps, "children">,
+    props: Omit<WindowProps, "children">,
     getPath: (src: string) => string,
     onMessage: (message: string) => void
 ): WindowType {
     const nwv = new NativeWebView(
-        { title, innerSize: { width, height } },
+        { title: props.title, innerSize: { width: props.width, height: props.height } },
         nwvPath => {
             const src = nwvPath.replace("nwv://", "");
             if (nwvPath === "nwv://index.html") {
@@ -63,6 +77,8 @@ export function getWindow(
             // console.log(message);
             if (message.type === "loaded") {
                 window.loaded = true;
+
+                updateWindow(nwv, props);
 
                 nwv.eval(applyMessage.toString())
                 nwv.eval(append.toString());
@@ -86,9 +102,6 @@ export function getWindow(
         }
     );
 
-    if (icon)
-        nwv.set("windowIcon", { path: resolve(icon) });
-
     const window = {
         loaded: false,
         loadingQueue: [],
@@ -99,6 +112,26 @@ export function getWindow(
     return window;
 }
 
+export function updateWindow(nwv: NativeWebView, props: Omit<WindowProps, "children">) {
+    for (const key in props) {
+        const value = props[key];
+        switch (key as keyof WindowProps) {
+            case "title": nwv.setTitle(value); continue;
+            case "width": nwv.set("innerSize", { width: value, height: props.height }); continue;
+            case "height": nwv.set("innerSize", { width: props.width, height: value }); continue;
+            case "icon": value && nwv.set("windowIcon", { path: value }); continue;
+            case "resizable": nwv.set("resizable", { resizable: value }); continue;
+            case "minSize": nwv.set("minInnerSize", value); continue;
+            case "maxSize": nwv.set("maxInnerSize", value); continue;
+            case "position": nwv.set("outerPosition", value); continue;
+            case "alwaysOnTop": nwv.set("alwaysOnTop", { always: value });
+            case "decorations": nwv.set("decorations", { decorations: value });
+            case "fullscreen": nwv.set("fullscreen", { fullscreen: value });
+            case "maximized": nwv.set("maximized", { maximized: value });
+            case "minimized": nwv.set("minimized", { minimized: value });
+        }
+    }
+}
 
 export function getPropsWithListeners(id: string, props: Props): Props {
     eventListener[id] = {};
