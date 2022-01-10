@@ -4,10 +4,10 @@ import { render, Window, View, Text, Pressable } from "../src";
 render(<Calculator />);
 
 function Calculator() {
-    const [ number, setNumber ] = useState("0");
+    const [number, setNumber] = useState("0");
 
-    const [ operation, setOperation ] = useState("");
-    const [ numberBefore, setNumberBefore ] = useState(0);
+    const [operation, setOperation] = useState("");
+    const [numberBefore, setNumberBefore] = useState(0);
 
     const value = Number(number);
 
@@ -26,6 +26,7 @@ function Calculator() {
     }
 
     function count() {
+        console.log("count", { value, numberBefore, operation })
         setNumberBefore(value);
 
         switch (operation) {
@@ -73,18 +74,13 @@ function Calculator() {
 }
 
 type ButtonProps = {
-    long: boolean,
-    color: string,
+    long?: boolean,
+    color?: string,
     onPress: () => void,
     children: string,
 };
 
-Button.defaultProps = {
-    long: false,
-    color: "#888",
-};
-
-function Button({ long, color, onPress, children }: ButtonProps) {
+function Button({ long = false, color = "#888", onPress, children }: ButtonProps) {
     return <Pressable
         style={{
             margin: 2,
