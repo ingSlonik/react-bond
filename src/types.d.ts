@@ -3,7 +3,7 @@ import NativeWebView from "native-webview";
 import { CSSProperties, ReactNode } from "react";
 import { WindowProps as WindowPropsComponent, WindowType as Window } from "./components/Window";
 
-type Type = "window" | "div" | "span" | "svg"; // ,...
+type Type = "window" | "div" | "span" | "img" | "svg"; // ,...
 
 export type Container = {
     status: "starting" | "run",
@@ -32,8 +32,18 @@ export type Instance = WindowInstance | {
 
 type Color = string;
 
+// part of on https://reactnative.dev/docs/layout-props
+export type SizeProps = {
+    width: number,
+    height: number,
+    maxHeight: number,
+    maxWidth: number,
+    minHeight: number,
+    minWidth: number,
+};
+
 // based on https://reactnative.dev/docs/layout-props
-export type LayoutStyle = {
+export type LayoutStyle = SizeProps & {
     alignContent: 'flex-start' | 'flex-end' | 'center' | 'stretch' | 'space-between' | 'space-around',
     alignItems: 'flex-start' | 'flex-end' | 'center' | 'stretch' | 'baseline',
     alignSelf: 'auto' | 'flex-start' | 'flex-end' | 'center' | 'stretch' | 'baseline',
@@ -55,7 +65,6 @@ export type LayoutStyle = {
     flexGrow: number,
     flexShrink: number,
     flexWrap: 'wrap' | 'nowrap' | 'wrap-reverse',
-    height: number,
     justifyContent: 'flex-start' | 'flex-end' | 'center' | 'space-between' | 'space-around' | 'space-evenly',
     left: number,
     margin: number,
@@ -67,10 +76,6 @@ export type LayoutStyle = {
     // marginStart
     marginTop: number,
     // marginVertical
-    maxHeight: number,
-    maxWidth: number,
-    minHeight: number,
-    minWidth: number,
     overflow: 'visible' | 'hidden' | 'scroll',
     padding: number,
     paddingBottom: number,
@@ -85,7 +90,6 @@ export type LayoutStyle = {
     right: number,
     // start
     top: number,
-    width: number,
     zIndex: number,
 };
 
