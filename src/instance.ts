@@ -6,14 +6,7 @@ import { CSSProperties } from "react";
 import { Instance, WindowInstance, Type, Props, WindowProps, Container, LayoutStyle, ViewStyle, TextStyle } from "./types";
 
 export function createWindowInstance(type: "window", props: WindowProps, rootContainer: Container): WindowInstance {
-    const window = getWindow(
-        props,
-        src => {
-            const path = resolve(__dirname, "..", "webview", src);
-            return path;
-        },
-        (message) => console.log(message),
-    )
+    const window = getWindow(props);
 
     window.run().then(() => console.log("TODO: Windows closed."))
 

@@ -59,18 +59,17 @@ export type WindowType = {
 };
 
 export function getWindow(
-    props: Omit<WindowProps, "children">,
-    getPath: (src: string) => string,
-    onMessage: (message: string) => void
+    props: Omit<WindowProps, "children">
 ): WindowType {
     const nwv = new NativeWebView(
         { title: props.title, innerSize: { width: props.width, height: props.height } },
         nwvPath => {
-            const src = nwvPath.replace("nwv://", "");
+            const src = nwvPath.replace("nwv://index.html", "").replace("nwv://", "");
             if (nwvPath === "nwv://index.html") {
-                return resolve(__dirname, "..", "..", "webview", src);
+                return resolve(__dirname, "..", "..", "webview", "index.html");
             } else {
-                return getPath(src);
+                console.log(resolve(process.cwd(), src));
+                return resolve(process.cwd(), src);
             }
         },
         (message: MessageToBackend) => {
@@ -95,7 +94,7 @@ export function getWindow(
                     throw new Error("Called not set listener.");
                 }
             } else if (message.type === "message") {
-                onMessage(message.message);
+                console.log("Message:", message.message);
             } else {
                 throw message.error;
             }
