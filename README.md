@@ -25,6 +25,7 @@ Clone repository and...
 $ npm run example -- example/hello.tsx
 $ npm run example -- example/counter.tsx
 $ npm run example -- example/calculator.tsx
+$ npm run example -- example/images.tsx
 ```
 
 ## Background
