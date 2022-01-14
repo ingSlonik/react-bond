@@ -7,6 +7,7 @@
         * {
             margin: 0px;
             padding: 0px;
+            box-sizing: border-box;
         }
 
         div {
@@ -14,6 +15,12 @@
             display: flex;
             flex-direction: column;
             align-items: stretch;
+        }
+
+        input,
+        textarea {
+            display: block;
+            width: 100%;
         }
 
         #root {
