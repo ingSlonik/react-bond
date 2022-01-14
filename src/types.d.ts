@@ -3,7 +3,7 @@ import NativeWebView from "native-webview";
 import { CSSProperties, ReactNode } from "react";
 import { WindowProps as WindowPropsComponent, WindowType as Window } from "./components/Window";
 
-type Type = "window" | "div" | "span" | "img" | "svg"; // ,...
+type Type = "window" | "div" | "span" | "img" | "input" | "svg"; // ,...
 
 export type Container = {
     status: "starting" | "run",
@@ -149,16 +149,13 @@ export type ViewStyle = {
 
 export type Style = TextStyle & ViewStyle;
 
-export type Events = {
-    onPress?: () => void,
-};
-
 export type WindowProps = Omit<WindowPropsComponent, "children">;
 
 
 export type Props = {
     style?: CSSProperties,
     onClick?: () => void,
+    onChange?: (event: { target: { value: string, checked: boolean } }) => void,
     innerText?: string,
 };
 
