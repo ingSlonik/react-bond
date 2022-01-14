@@ -47,9 +47,9 @@ export type MessageToBackend =
     | { type: "loaded" }
     | { type: "message", message: string }
     | { type: "error", error: Error }
-    | { type: "event", id: string, eventType: string, value: null | number | string };
+    | { type: "event", id: string, eventType: string, value: any };
 
-const eventListener: { [id: string]: { [eventType: string]: (value: null | number | string) => void } } = {};
+const eventListener: { [id: string]: { [eventType: string]: (value: any) => void } } = {};
 
 export type WindowType = {
     loaded: boolean,
@@ -68,7 +68,6 @@ export function getWindow(
             if (nwvPath === "nwv://index.html") {
                 return resolve(__dirname, "..", "..", "webview", "index.html");
             } else {
-                console.log(resolve(process.cwd(), src));
                 return resolve(process.cwd(), src);
             }
         },
@@ -213,7 +212,12 @@ function update(id: string, props: Props) {
                 element.style[key] = style[key];
             }
         } else if (tag.substring(0, 2) === "on") {
-            element[tag] = (e) => sendMessage({ type: "event", id, eventType: props[tag], value: JSON.stringify(e) });
+            element[tag] = (e) => sendMessage({
+                type: "event",
+                id,
+                eventType: props[tag],
+                value: tag === "onchange" ? { target: { value: e.target.value, checked: e.target.checked } } : e
+            });
         } else {
             element[tag] = props[tag];
         }
