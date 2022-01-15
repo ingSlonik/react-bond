@@ -51,6 +51,7 @@ export type MessageToBackend =
     | { type: "event", id: string, eventType: string, value: any };
 
 const eventListener: { [id: string]: { [eventType: string]: (value: any) => void } } = {};
+const dropListener: { [id: string]: (paths: string[]) => void } = {};
 
 export type WindowType = {
     loaded: boolean,
@@ -63,46 +64,54 @@ export function getWindow(
     props: Omit<WindowProps, "children">
 ): WindowType {
     const nwv = new NativeWebView(
-        { title: props.title, innerSize: { width: props.width, height: props.height } },
-        path => {
-            if (path === "index.html") {
-                return resolve(__dirname, "..", "..", "webview", "index.html");
-            } else {
-                if (path.startsWith("file?src=")) {
-                    return resolve(process.cwd(), decodeURIComponent(path.substring(9)));
+        {
+            title: props.title,
+            innerSize: { width: props.width, height: props.height },
+            getPath: path => {
+                if (path === "index.html") {
+                    return resolve(__dirname, "..", "..", "webview", "index.html");
                 } else {
-                    // user custom path
-                    return path;
+                    if (path.startsWith("file?src=")) {
+                        return resolve(process.cwd(), decodeURIComponent(path.substring(9)));
+                    } else {
+                        // user custom path
+                        return path;
+                    }
+                }
+            },
+            onDrop: (drop) => {
+                if (drop.type === "fileDropDropped") {
+                    Object.values(dropListener).forEach(listener => listener(drop.paths));
+                }
+            },
+            onMessage: (message: MessageToBackend) => {
+                // console.log(message);
+                if (message.type === "loaded") {
+                    window.loaded = true;
+
+                    updateWindow(nwv, props);
+
+                    nwv.eval(applyMessage.toString())
+                    nwv.eval(append.toString());
+                    nwv.eval(update.toString());
+                    nwv.eval(remove.toString());
+
+                    window.loadingQueue.forEach(js => nwv.eval(js));
+
+                } else if (message.type === "event") {
+                    const listener = eventListener[message.id]?.[message.eventType];
+                    if (listener) {
+                        listener(message.value);
+                    } else {
+                        throw new Error("Called not set listener.");
+                    }
+                } else if (message.type === "message") {
+                    console.log("Message:", message.message);
+                } else {
+                    throw message.error;
                 }
             }
         },
-        (message: MessageToBackend) => {
-            // console.log(message);
-            if (message.type === "loaded") {
-                window.loaded = true;
-
-                updateWindow(nwv, props);
-
-                nwv.eval(applyMessage.toString())
-                nwv.eval(append.toString());
-                nwv.eval(update.toString());
-                nwv.eval(remove.toString());
-
-                window.loadingQueue.forEach(js => nwv.eval(js));
-
-            } else if (message.type === "event") {
-                const listener = eventListener[message.id]?.[message.eventType];
-                if (listener) {
-                    listener(message.value);
-                } else {
-                    throw new Error("Called not set listener.");
-                }
-            } else if (message.type === "message") {
-                console.log("Message:", message.message);
-            } else {
-                throw message.error;
-            }
-        }
     );
 
     const window = {
@@ -138,15 +147,21 @@ export function updateWindow(nwv: NativeWebView, props: Omit<WindowProps, "child
 
 export function getPropsWithListeners(id: string, props: Props): Props {
     eventListener[id] = {};
+    delete dropListener[id];
 
     const propsWithListeners: Props = {};
 
     for (const tag in props) {
+        const value = props[tag];
         if (tag.startsWith("on")) {
-            propsWithListeners[tag.toLocaleLowerCase()] = tag;
-            eventListener[id][tag] = props[tag];
+            if (tag === "onDropFiles") {
+                dropListener[id] = value;
+            } else {
+                propsWithListeners[tag.toLocaleLowerCase()] = tag;
+                eventListener[id][tag] = value;
+            }
         } else {
-            propsWithListeners[tag] = props[tag];
+            propsWithListeners[tag] = value;
         }
     }
 
