@@ -56,11 +56,15 @@ const reconciler = ReactReconciler<
     appendInitialChild(parentInstance, childInstance) {
         appendInitial(parentInstance, childInstance);
     },
+    appendChild(parentInstance, child) {
+        appendInitial(parentInstance, child);
+        finalizeInitialChildren(parentInstance);
+    },
     cancelTimeout(id) {
         clearTimeout(id);
     },
     finalizeInitialChildren(instance, type, props, rootContainer, hostContext) {
-        return finalizeInitialChildren(instance, rootContainer);
+        return finalizeInitialChildren(instance);
     },
     getRootHostContext(rootContainer) {
         return "container";

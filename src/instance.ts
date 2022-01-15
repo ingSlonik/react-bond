@@ -36,7 +36,7 @@ export function appendInitial(parent: Instance, child: Instance) {
     parent.children.push(child);
 }
 
-export function finalizeInitialChildren(instance: Instance, rootContainer: Container): boolean {
+export function finalizeInitialChildren(instance: Instance): boolean {
     const { id, children } = instance;
     if (id) {
         let finalize = false;
@@ -48,7 +48,7 @@ export function finalizeInitialChildren(instance: Instance, rootContainer: Conta
                 child.parent = instance;
 
                 appendInstance(child);
-                finalizeInitialChildren(child, rootContainer);
+                finalizeInitialChildren(child);
             }
         });
         return finalize;
