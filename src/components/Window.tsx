@@ -1,6 +1,7 @@
-import React from "react";
-import NativeWebView from "native-webview";
 import { resolve } from "path";
+import NativeWebView from "native-webview";
+
+import React from "react";
 import { Type, Props } from "../types";
 
 // ------------ Component -------------
@@ -63,12 +64,17 @@ export function getWindow(
 ): WindowType {
     const nwv = new NativeWebView(
         { title: props.title, innerSize: { width: props.width, height: props.height } },
-        nwvPath => {
-            const src = nwvPath.replace("nwv://index.html", "").replace("nwv://", "");
-            if (nwvPath === "nwv://index.html") {
+        path => {
+            if (path === "index.html") {
                 return resolve(__dirname, "..", "..", "webview", "index.html");
             } else {
-                return resolve(process.cwd(), src);
+                // only absolute paths
+                if (process.platform === "win32") {
+                    // C:/ is included
+                    return resolve(path);
+                } else {
+                    return resolve("/", path);
+                }
             }
         },
         (message: MessageToBackend) => {
