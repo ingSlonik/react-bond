@@ -153,6 +153,8 @@ export type Props = {
     style?: CSSProperties,
     onClick?: () => void,
     onChange?: (event: { target: { value: string, checked: boolean } }) => void,
+    // will be called when user drop files to window
+    onDropFiles?: (paths: string[]) => void,
     innerText?: string,
 };
 
