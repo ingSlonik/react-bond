@@ -1,6 +1,6 @@
 import ReactReconciler from "react-reconciler";
 
-import { appendInitial, createInstance, createWindowInstance, finalizeInitialChildren, updateInstance } from "./instance";
+import { appendInitial, createInstance, createWindowInstance, finalizeInitialChildren, removeInstance, updateInstance } from "./instance";
 import { createContainer } from "./container";
 
 import { Type, Container, Instance, RenderProps, Props, WindowProps } from "./types";
@@ -122,6 +122,9 @@ const reconciler = ReactReconciler<
             }
         }
     },
+    removeChild(parentInstance, child) {
+        removeInstance(parentInstance, child);
+    }
 });
 
 export function render(children: JSX.Element) {

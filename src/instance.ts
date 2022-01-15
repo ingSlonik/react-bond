@@ -1,6 +1,6 @@
 import { resolve } from "path";
 
-import { appendElement, getWindow, updateElement, updateWindow } from "./components/Window";
+import { appendElement, getWindow, removeElement, updateElement, updateWindow } from "./components/Window";
 
 import { CSSProperties } from "react";
 import { Instance, WindowInstance, Type, Props, WindowProps, Container, LayoutStyle, ViewStyle, TextStyle } from "./types";
@@ -85,6 +85,20 @@ export function updateInstance(instance: Instance, newProps: Partial<Props>, /* 
 
         updateElement(window.window, id, newProps);
     }
+}
+
+export function removeInstance(parentInstance: Instance, child: Instance) {
+    const childIndex = parentInstance.children.indexOf(child);
+
+    if (childIndex < 0) throw new Error("The parent not include the child for remove.");
+
+    const window = getWindowInstance(child);
+    const id = child.id;
+
+    if (!id) throw new Error("Removed instance doesn't have id.");
+
+    removeElement(window.window, id);
+    parentInstance.children.splice(childIndex, 1);
 }
 
 export function getWindowInstance(child: Instance): WindowInstance {
