@@ -80,7 +80,7 @@ const reconciler = ReactReconciler<
         return instance;
     },
     prepareForCommit(containerInfo) {
-        return {};
+        return null;
     },
     preparePortalMount(containerInfo) { },
     prepareUpdate(instance, type, oldProps, newProps, rootContainer, hostContext) {
@@ -92,6 +92,7 @@ const reconciler = ReactReconciler<
         return updatePayload;
     },
     resetAfterCommit(containerInfo) { },
+    resetTextContent(instance) { },
     scheduleTimeout(fn, delay) {
         return setTimeout(fn, delay);
     },
@@ -109,7 +110,6 @@ const reconciler = ReactReconciler<
     commitMount(instance, type, props, internalInstanceHandle) {
         // console.log("commit", instance.children);
     },
-    // is is done in prepare update (I need Container for that)
     commitUpdate(instance, updatePayload, type, oldProps, newProps, finishedWork) {
         updateInstance(instance, updatePayload);
     },
@@ -124,7 +124,11 @@ const reconciler = ReactReconciler<
     },
     removeChild(parentInstance, child) {
         removeInstance(parentInstance, child);
-    }
+    },
+    removeChildFromContainer(container, child) {
+        // TODO: remove window
+    },
+    insertBefore(parentInstance, child, beforeChild) { },
 });
 
 export function render(children: JSX.Element) {
