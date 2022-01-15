@@ -30,8 +30,10 @@ export function File({ message = "Drop the file here", style, dragStyle, message
         onDragLeave={e => setDrag(false)}
         // @ts-ignore
         onDropFiles={(paths: string[]) => {
+            if (drag) {
+                onFiles(paths);
+            }
             setDrag(false);
-            onFiles(paths);
         }}
     >
         <span style={{ pointerEvents: "none", textAlign: "center", ...messageCssProperties }}>{message}</span>
