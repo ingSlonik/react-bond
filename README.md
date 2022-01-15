@@ -27,6 +27,7 @@ $ npm run example -- example/counter.tsx
 $ npm run example -- example/calculator.tsx
 $ npm run example -- example/images.tsx
 $ npm run example -- example/inputs.tsx
+$ npm run example -- example/multipleWindows.tsx
 ```
 
 ## Background
