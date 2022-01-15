@@ -8,8 +8,8 @@ export type ButtonProps = {
     // accessibilityLabel
     // accessibilityActions
     // onAccessibilityAction
-    color: string,
-    disabled: boolean,
+    color?: string,
+    disabled?: boolean,
     // hasTVPreferredFocus
     // nextFocusDown
     // nextFocusForward
@@ -20,12 +20,7 @@ export type ButtonProps = {
     // touchSoundDisabled
 };
 
-Button.defaultProps = {
-    color: "#F1F1F1",
-    disabled: false,
-};
-
-export function Button({ onPress, title, color, disabled }: ButtonProps): JSX.Element {
+export function Button({ onPress, title, color = "#F1F1F1", disabled = false }: ButtonProps): JSX.Element {
     return <Pressable
         style={{
             borderRadius: 4,
