@@ -1,7 +1,7 @@
 import { resolve } from "path";
 import NativeWebView from "native-webview";
 
-import React from "react";
+import React, { ReactNode } from "react";
 import { Type, Props } from "../types";
 
 // ------------ Component -------------
@@ -29,7 +29,7 @@ export type WindowProps = {
     fullscreen?: boolean,
     maximized?: boolean,
     minimized?: boolean,
-    children: JSX.Element,
+    children: ReactNode,
 };
 
 export function Window({ children, icon = null, ...props }: WindowProps): JSX.Element {
@@ -65,7 +65,6 @@ export function getWindow(
     const nwv = new NativeWebView(
         { title: props.title, innerSize: { width: props.width, height: props.height } },
         path => {
-            console.log(path)
             if (path === "index.html") {
                 return resolve(__dirname, "..", "..", "webview", "index.html");
             } else {
