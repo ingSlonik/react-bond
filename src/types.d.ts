@@ -6,10 +6,7 @@ import { WindowProps as WindowPropsComponent, WindowType as Window } from "./com
 type Type = "window" | "div" | "span" | "img" | "input" | "svg"; // ,...
 
 export type Container = {
-    status: "starting" | "run",
     windows: Instance[],
-    // append(parent: Instance, child: Instance): void,
-    // update(instance: Instance, newProps: Partial<Props>),
 };
 
 export type WindowInstance = {

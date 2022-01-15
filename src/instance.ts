@@ -8,7 +8,8 @@ import { Instance, WindowInstance, Type, Props, WindowProps, Container, LayoutSt
 export function createWindowInstance(type: "window", props: WindowProps, rootContainer: Container): WindowInstance {
     const window = getWindow(props);
 
-    window.run().then(() => console.log("TODO: Windows closed."))
+    // not await, render ends itself 
+    window.run();
 
     return {
         id: "root",
