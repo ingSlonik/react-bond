@@ -3,7 +3,7 @@ import { Pressable } from "./Pressable";
 import { Text } from "./Text";
 
 export type ButtonProps = {
-    title: string,​
+    title: string,
     onPress: () => void,
     // accessibilityLabel
     // accessibilityActions
@@ -27,7 +27,7 @@ Button.defaultProps = {
 
 export function Button({ onPress, title, color, disabled }: ButtonProps): JSX.Element {
     return <Pressable
-        style={{ 
+        style={{
             borderRadius: 4,
             borderColor: "#888888",
             borderWidth: 1,
@@ -39,7 +39,7 @@ export function Button({ onPress, title, color, disabled }: ButtonProps): JSX.El
             backgroundColor: color,
             opacity: disabled ? 0.6 : 1,
         }}
-        onPress={disabled ? () => {} : onPress}
+        onPress={disabled ? () => { } : onPress}
     >
         <Text style={{ textAlign: "center" }}>{title}</Text>
     </Pressable>
