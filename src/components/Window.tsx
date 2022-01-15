@@ -65,15 +65,15 @@ export function getWindow(
     const nwv = new NativeWebView(
         { title: props.title, innerSize: { width: props.width, height: props.height } },
         path => {
+            console.log(path)
             if (path === "index.html") {
                 return resolve(__dirname, "..", "..", "webview", "index.html");
             } else {
-                // only absolute paths
-                if (process.platform === "win32") {
-                    // C:/ is included
-                    return resolve(path);
+                if (path.startsWith("file?src=")) {
+                    return resolve(process.cwd(), decodeURIComponent(path.substring(9)));
                 } else {
-                    return resolve("/", path);
+                    // user custom path
+                    return path;
                 }
             }
         },
