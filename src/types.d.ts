@@ -31,8 +31,10 @@ type Color = string;
 
 // part of on https://reactnative.dev/docs/layout-props
 export type SizeProps = {
-    width: number,
-    height: number,
+    /** number as pixel, string ends with % */
+    width: number | string,
+    /** number as pixel, string ends with % */
+    height: number | string,
     maxHeight: number,
     maxWidth: number,
     minHeight: number,
