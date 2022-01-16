@@ -4,7 +4,7 @@ import { LayoutStyle, ViewStyle, TextStyle } from "../types";
 
 export type ViewProps = {
     style?: Partial<LayoutStyle & ViewStyle>,
-    children: ReactNode,
+    children?: ReactNode,
 };
 
 export function View({ style, children }: ViewProps): JSX.Element {
