@@ -10,11 +10,18 @@
             box-sizing: border-box;
         }
 
+        html,
+        body,
+        #root {
+            overflow: hidden;
+        }
+
         div {
             position: relative;
             display: flex;
             flex-direction: column;
             align-items: stretch;
+            overflow: visible;
         }
 
         input,
