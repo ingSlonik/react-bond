@@ -29,6 +29,7 @@ $ npm run example -- example/images.tsx
 $ npm run example -- example/inputs.tsx
 $ npm run example -- example/file.tsx
 $ npm run example -- example/multipleWindows.tsx
+$ npm run example -- example/scroll.tsx
 ```
 
 ## Background
