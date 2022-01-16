@@ -37,5 +37,5 @@ export function Button({ onPress, title, color = "#F1F1F1", disabled = false }: 
         onPress={disabled ? () => { } : onPress}
     >
         <Text style={{ textAlign: "center" }}>{title}</Text>
-    </Pressable>
+    </Pressable>;
 }
