@@ -144,6 +144,22 @@ export type ViewStyle = {
     borderWidth: number,
     // elevation
     opacity: number,
+
+    transform: Array<
+        | { matrix: [number, number, number, number, number, number] }
+        | { perspective: number }
+        | { rotate: string }
+        | { rotateX: string }
+        | { rotateY: string }
+        | { rotateZ: string }
+        | { scale: number }
+        | { scaleX: number }
+        | { scaleY: number }
+        | { translateX: number }
+        | { translateY: number }
+        | { skewX: number }
+        | { skewY: number }
+    >,
 };
 
 export type Style = TextStyle & ViewStyle;

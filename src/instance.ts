@@ -118,13 +118,21 @@ export function getCSSProperties(style?: Partial<LayoutStyle & ViewStyle & TextS
         const keyLower = key.toLowerCase();
         const value = style[key];
 
-        if (
+        if (key === "transform") {
+            cssProperties.transform = value.map(trans => Object.keys(trans).map(key => {
+                let value = trans[key];
+                if (Array.isArray(value)) {
+                    value = value.join(",");
+                }
+                return `${key}(${value})`;
+            })).join(" ");
+        } else if (
             typeof value === "number" &&
             (keyLower.includes("margin") || keyLower.includes("padding") || keyLower.includes("size") || keyLower.includes("radius") || keyLower.includes("width") || keyLower.includes("height"))
         ) {
-            cssProperties[key] = style[key] + "px";
+            cssProperties[key] = value + "px";
         } else {
-            cssProperties[key] = style[key];
+            cssProperties[key] = value;
         }
     }
 
