@@ -3,6 +3,7 @@ export { render } from "./render";
 // native components
 export { Window, WindowProps } from "./components/Window";
 export { View, ViewProps } from "./components/View";
+export { ScrollView, ScrollViewProps } from "./components/ScrollView";
 export { Text, TextProps } from "./components/Text";
 export { Pressable, PressableProps } from "./components/Pressable";
 export { Image, ImageProps } from "./components/Image";
