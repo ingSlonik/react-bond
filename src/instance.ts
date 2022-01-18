@@ -44,7 +44,8 @@ export function finalizeInitialChildren(instance: Instance): boolean {
             if (child.id === null) {
                 // render whole tree with ids
                 finalize = true;
-                child.id = `${id}.${i}`;
+                // TODO: check if exists
+                child.id = `${id}-${i}`;
                 child.parent = instance;
 
                 appendInstance(child);
@@ -116,25 +117,34 @@ export function getCSSProperties(style?: Partial<LayoutStyle & ViewStyle & TextS
 
     for (const key in style) {
         const keyLower = key.toLowerCase();
-        const value = style[key];
+        let value = style[key];
 
         if (key === "transform") {
-            cssProperties.transform = value.map(trans => Object.keys(trans).map(key => {
-                let value = trans[key];
-                if (Array.isArray(value)) {
-                    value = value.join(",");
-                }
-                return `${key}(${value})`;
-            })).join(" ");
+            value = value.map(tran => Object.keys(tran)
+                .map(type => `${type}(${Array.isArray(tran[type]) ? tran[type].join(",") : tran[type]})`).join(" ")
+            ).join(" ");
+        } else if (key === "animationDuration" || key === "animationDelay") {
+            value = `${value}ms`;
+        } else if (key === "animationKeyframes") {
+            value = Object.keys(value).map(percent => `${percent}% {\n${getCSSString(value[percent])}\n}`).join("\n");
         } else if (
             typeof value === "number" &&
             (keyLower.includes("margin") || keyLower.includes("padding") || keyLower.includes("size") || keyLower.includes("radius") || keyLower.includes("width") || keyLower.includes("height"))
         ) {
-            cssProperties[key] = value + "px";
-        } else {
-            cssProperties[key] = value;
+            value = `${value}px`;
         }
+
+        cssProperties[key] = value;
     }
 
     return cssProperties;
+}
+
+function getCSSString(style: Partial<LayoutStyle & ViewStyle & TextStyle>): string {
+    const css = getCSSProperties(style);
+    return Object.keys(css).map(key => `${camelToSnakeCase(key)}: ${css[key]};`).join("\n");
+}
+
+function camelToSnakeCase(camel: string): string {
+    return camel.replace(/[A-Z]/g, letter => `_${letter.toLowerCase()}`);
 }
