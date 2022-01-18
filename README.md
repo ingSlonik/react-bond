@@ -30,6 +30,43 @@ $ npm run example -- example/inputs.tsx
 $ npm run example -- example/file.tsx
 $ npm run example -- example/multipleWindows.tsx
 $ npm run example -- example/scroll.tsx
+$ npm run example -- example/activityIndicator.tsx
+```
+
+## Features
+
+### Basic components from react-native
+
+All components works in all systems in the same way.
+They has the same properties as in `react-native` library without system dependent properties.
+
+- `ActivityIndicator`
+- `Button`
+- `Image`
+- `Pressable`
+- `ScrollView`
+- `Text`
+- `View`
+
+### react-bond components
+
+- `Window`
+- `File`
+- `Input`
+
+### Animation
+
+Powered by CSS3 animation defined inline just in `style` prop.
+
+```js
+<View style={{
+    ...viewStyle,
+    animationDuration: 2000,
+    animationKeyframes: {
+        0: { transform: [{ rotate: "0deg" }] },
+        100: { transform: [{ rotate: "360deg" }] },
+    },
+}} />
 ```
 
 ## Background
