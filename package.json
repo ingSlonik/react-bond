@@ -8,9 +8,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "example": "ts-node",
     "build": "tsc src/index.tsx --outDir lib --target esnext --module commonjs --esModuleInterop true --jsx react --sourceMap true --declaration true",
-    "build-example": "tsc example/window.tsx --outDir example/lib --target esnext --module commonjs --esModuleInterop true --jsx react",
-    "pkg-example": "pkg --config package.json example/lib/example/window.js",
-    "pkg-hello": "pkg lib/hello.js"
+    "build-example": "tsc example/calculator.tsx --outDir example/lib --target esnext --module commonjs --esModuleInterop true --jsx react"
   },
   "repository": {
     "type": "git",
@@ -37,11 +35,7 @@
     "@types/node": "^16.11.6",
     "@types/react": "^17.0.34",
     "@types/react-reconciler": "^0.26.4",
-    "pkg": "^5.4.1",
     "ts-node": "^10.4.0",
     "typescript": "^4.4.4"
-  },
-  "pkg": {
-    "outputPath": "dist"
   }
 }
