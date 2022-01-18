@@ -229,7 +229,30 @@ function update(id: string, props: Props) {
         if (tag === "style") {
             const style = props[tag];
             for (const key in style) {
-                element.style[key] = style[key];
+                const value = style[key];
+                if (key === "animationKeyframes") {
+                    // implement animation
+                    const animationName = "react-bond-animation-" + id;
+                    element.style.animationName = animationName;
+
+                    let styleElement = document.getElementById(animationName);
+                    if (!styleElement) {
+                        styleElement = document.createElement("style");
+                        styleElement.id = animationName;
+                        element.appendChild(styleElement);
+                    }
+
+                    const styles = "@keyframes " + animationName + " {\n" + value + "\n)";
+                    // @ts-ignore IE fix
+                    if (styleElement.styleSheet) {
+                        // @ts-ignore IE fix
+                        styleElement.styleSheet.cssText = styles;
+                    } else {
+                        styleElement.innerHTML = styles;
+                    }
+                } else {
+                    element.style[key] = value;
+                }
             }
         } else if (tag.substring(0, 2) === "on") {
             element[tag] = (e) => sendMessage({
