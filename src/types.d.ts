@@ -145,21 +145,35 @@ export type ViewStyle = {
     // elevation
     opacity: number,
 
-    transform: Array<
-        | { matrix: [number, number, number, number, number, number] }
-        | { perspective: number }
-        | { rotate: string }
-        | { rotateX: string }
-        | { rotateY: string }
-        | { rotateZ: string }
-        | { scale: number }
-        | { scaleX: number }
-        | { scaleY: number }
-        | { translateX: number }
-        | { translateY: number }
-        | { skewX: number }
-        | { skewY: number }
-    >,
+    transform: TransformStyle,
+};
+
+export type TransformStyle = Array<
+    | { matrix: [number, number, number, number, number, number] }
+    | { perspective: number }
+    | { rotate: string }
+    | { rotateX: string }
+    | { rotateY: string }
+    | { rotateZ: string }
+    | { scale: number }
+    | { scaleX: number }
+    | { scaleY: number }
+    | { translateX: number }
+    | { translateY: number }
+    | { skewX: number }
+    | { skewY: number }
+>;
+
+export type AnimationStyle<T> = {
+    animationDuration: number, // ms
+    animationTimingFunction: "ease" | "ease-in" | "ease-out" | "ease-in-out" | "linear" | "step-start" | "step-end",
+    animationDelay: number, // ms
+    animationIterationCount: number | "infinite",
+    animationDirection: "normal" | "reverse" | "alternate" | "alternate-reverse",
+    animationFillMode: "none" | "forwards" | "backwards" | "both",
+    animationPlayState: "running" | "paused",
+
+    animationKeyframes: { [percent: number]: Partial<T> },
 };
 
 export type Style = TextStyle & ViewStyle;
