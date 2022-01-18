@@ -11,5 +11,6 @@ export { File, FileProps } from "./components/File";
 export { Input } from "./components/Input";
 
 // combined components
+export { ActivityIndicator, ActivityIndicatorProps } from "./components/ActivityIndicator";
 export { Button, ButtonProps } from "./components/Button";
 
