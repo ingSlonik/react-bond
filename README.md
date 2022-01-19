@@ -46,6 +46,7 @@ They has the same properties as in `react-native` library without system depende
 - `Pressable`
 - `ScrollView`
 - `Text`
+- `TextInput`
 - `View`
 
 ### react-bond components
