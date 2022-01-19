@@ -1,9 +1,9 @@
 import React, { ReactNode } from "react";
 import { getCSSProperties } from "../instance";
-import { LayoutStyle, ViewStyle, TextStyle } from "../types";
+import { TextStyle, AnimationStyle } from "../types";
 
 export type TextProps = {
-    style?: Partial<TextStyle>,
+    style?: Partial<TextStyle & AnimationStyle<TextProps>>,
     children: ReactNode,
 };
 
