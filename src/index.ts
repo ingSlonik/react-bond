@@ -13,4 +13,4 @@ export { Input } from "./components/Input";
 // combined components
 export { ActivityIndicator, ActivityIndicatorProps } from "./components/ActivityIndicator";
 export { Button, ButtonProps } from "./components/Button";
-
+export { TextInput, TextInputProps } from "./components/TextInput";
