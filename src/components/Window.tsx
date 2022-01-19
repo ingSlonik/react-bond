@@ -40,8 +40,8 @@ export function Window({ children, icon = null, ...props }: WindowProps): JSX.El
 // ------------ Backend -------------
 
 export type MessageToFrontend =
-    | { type: "append", parentId: string, id: string, tagName: Type, props: Props }
-    | { type: "update", id: string, props: Props }
+    | { type: "append", parentId: string, id: string, tagName: Type, props: FrontendProps }
+    | { type: "update", id: string, props: FrontendProps }
     | { type: "remove", id: string };
 
 export type MessageToBackend =
@@ -49,6 +49,10 @@ export type MessageToBackend =
     | { type: "message", message: string }
     | { type: "error", error: Error }
     | { type: "event", id: string, eventType: string, value: any };
+
+type FrontendProps = {
+    [Key in keyof Props as Lowercase<Key>]: Props[Key]; // string for listeners
+};
 
 const eventListener: { [id: string]: { [eventType: string]: (value: any) => void } } = {};
 const dropListener: { [id: string]: (paths: string[]) => void } = {};
@@ -145,23 +149,25 @@ export function updateWindow(nwv: NativeWebView, props: Omit<WindowProps, "child
     }
 }
 
-export function getPropsWithListeners(id: string, props: Props): Props {
+export function getFrontendProps(id: string, props: Props): FrontendProps {
     eventListener[id] = {};
     delete dropListener[id];
 
-    const propsWithListeners: Props = {};
+    const propsWithListeners: FrontendProps = {};
 
     for (const tag in props) {
+        const tagLowerCase = tag.toLowerCase();
+
         const value = props[tag];
         if (tag.startsWith("on")) {
             if (tag === "onDropFiles") {
                 dropListener[id] = value;
             } else {
-                propsWithListeners[tag.toLocaleLowerCase()] = tag;
+                propsWithListeners[tagLowerCase] = tag;
                 eventListener[id][tag] = value;
             }
         } else {
-            propsWithListeners[tag] = value;
+            propsWithListeners[tagLowerCase] = value;
         }
     }
 
@@ -169,7 +175,7 @@ export function getPropsWithListeners(id: string, props: Props): Props {
 }
 
 export function appendElement(window: WindowType, parentId: string, id: string, tagName: Type, props: Props) {
-    const message: MessageToFrontend = { type: "append", parentId, id, tagName, props: getPropsWithListeners(id, props) };
+    const message: MessageToFrontend = { type: "append", parentId, id, tagName, props: getFrontendProps(id, props) };
     const js = `applyMessage(${JSON.stringify(message)});`;
     if (window.loaded) {
         window.nwv.eval(js);
@@ -179,7 +185,7 @@ export function appendElement(window: WindowType, parentId: string, id: string, 
 }
 
 export function updateElement(window: WindowType, id: string, props: Props) {
-    const message: MessageToFrontend = { type: "update", id, props: getPropsWithListeners(id, props) };
+    const message: MessageToFrontend = { type: "update", id, props: getFrontendProps(id, props) };
     const js = `applyMessage(${JSON.stringify(message)});`;
     if (window.loaded) {
         window.nwv.eval(js);
@@ -199,6 +205,7 @@ export function removeElement(window: WindowType, id: string) {
 }
 
 // ------------- WebView -------------
+/** Implemented in native-webview */
 function sendMessage(message: MessageToBackend) { }
 
 function applyMessage(message: MessageToFrontend) {
@@ -210,7 +217,7 @@ function applyMessage(message: MessageToFrontend) {
     }
 }
 
-function append(parentId: string, id: string, tagName: Type, props: Props) {
+function append(parentId: string, id: string, tagName: Type, props: FrontendProps) {
     const element = document.createElement(tagName);
     element.id = id;
 
@@ -221,7 +228,7 @@ function append(parentId: string, id: string, tagName: Type, props: Props) {
     update(id, props);
 }
 
-function update(id: string, props: Props) {
+function update(id: string, props: FrontendProps) {
     const element = document.getElementById(id);
     if (!element) throw new Error(`Element with id "${id}" doesn't exist and cannot be updated.`);
 
