@@ -1,9 +1,7 @@
-import NativeWebView from "native-webview";
-
 import { CSSProperties, ReactNode } from "react";
 import { WindowProps as WindowPropsComponent, WindowType as Window } from "./components/Window";
 
-type Type = "window" | "div" | "span" | "img" | "input" | "svg"; // ,...
+type Type = "window" | "div" | "span" | "img" | "input" | "textarea" | "svg"; // ,...
 
 export type Container = {
     windows: Instance[],
