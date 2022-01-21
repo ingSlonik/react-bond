@@ -1,9 +1,9 @@
 import React, { ReactNode } from "react";
 import { getCSSProperties } from "../instance";
-import { LayoutStyle, ViewStyle, TextStyle } from "../types";
+import { LayoutStyle, ViewStyle, TransitionsStyle } from "../types";
 
 export type PressableProps = {
-    style?: Partial<LayoutStyle & ViewStyle>,
+    style?: Partial<LayoutStyle & ViewStyle & TransitionsStyle>,
     onPress: () => void,
     children: ReactNode,
 };

@@ -1,9 +1,9 @@
 import React, { ReactNode } from "react";
 import { getCSSProperties } from "../instance";
-import { LayoutStyle, ViewStyle, AnimationStyle } from "../types";
+import { LayoutStyle, ViewStyle, TransitionsStyle, AnimationStyle } from "../types";
 
 export type ViewProps = {
-    style?: Partial<LayoutStyle & ViewStyle & AnimationStyle<LayoutStyle & ViewStyle>>,
+    style?: Partial<LayoutStyle & ViewStyle & TransitionsStyle & AnimationStyle<LayoutStyle & ViewStyle>>,
     children?: ReactNode,
 };
 
