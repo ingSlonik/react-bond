@@ -162,9 +162,18 @@ export type TransformStyle = Array<
     | { skewY: number }
 >;
 
+export type TransitionsStyle = {
+    transitionProperty: string,
+    transitionDuration: number, // ms
+    transitionTimingFunction: TimingFunction,
+    transitionDelay: number, // ms
+};
+
+type TimingFunction = "ease" | "ease-in" | "ease-out" | "ease-in-out" | "linear" | "step-start" | "step-end";
+
 export type AnimationStyle<T> = {
     animationDuration: number, // ms
-    animationTimingFunction: "ease" | "ease-in" | "ease-out" | "ease-in-out" | "linear" | "step-start" | "step-end",
+    animationTimingFunction: TimingFunction,
     animationDelay: number, // ms
     animationIterationCount: number | "infinite",
     animationDirection: "normal" | "reverse" | "alternate" | "alternate-reverse",
