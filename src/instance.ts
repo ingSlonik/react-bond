@@ -123,13 +123,13 @@ export function getCSSProperties(style?: Partial<LayoutStyle & ViewStyle & TextS
             value = value.map(tran => Object.keys(tran)
                 .map(type => `${type}(${Array.isArray(tran[type]) ? tran[type].join(",") : tran[type]})`).join(" ")
             ).join(" ");
-        } else if (key === "animationDuration" || key === "animationDelay") {
+        } else if (keyLower.endsWith("duration") || keyLower.endsWith("delay")) {
             value = `${value}ms`;
         } else if (key === "animationKeyframes") {
             value = Object.keys(value).map(percent => `${percent}% {\n${getCSSString(value[percent])}\n}`).join("\n");
         } else if (
             typeof value === "number" &&
-            (keyLower.includes("margin") || keyLower.includes("padding") || keyLower.includes("size") || keyLower.includes("radius") || keyLower.includes("width") || keyLower.includes("height"))
+            (keyLower.includes("margin") || keyLower.includes("padding") || keyLower.includes("size") || keyLower.includes("radius") || keyLower.includes("width") || keyLower.includes("height") || keyLower.includes("top") || keyLower.includes("left") || keyLower.includes("bottom") || keyLower.includes("right"))
         ) {
             value = `${value}px`;
         }
