@@ -42,8 +42,11 @@ function InputsExample() {
         <Input.Range value={number} step={0.5} min={0} max={21} onChange={setNumber} />
 
         <H2>Switch</H2>
-        <Switch value={bool} onValueChange={setBool} />
-        <Switch disabled value={bool} onValueChange={setBool} />
+        <View style={{ flexDirection: "row" }}>
+            <Switch value={bool} onValueChange={setBool} />
+            <View style={{ width: 16 }} />
+            <Switch disabled value={bool} onValueChange={setBool} />
+        </View>
     </>;
 }
 
