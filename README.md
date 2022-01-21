@@ -17,23 +17,16 @@ render(<Window title="Hello app" width={420} height={150}>
 </Window>);
 ```
 
-## Run examples
-
-Clone repository and...
-
-```
-$ npm run example -- example/hello.tsx
-$ npm run example -- example/counter.tsx
-$ npm run example -- example/calculator.tsx
-$ npm run example -- example/images.tsx
-$ npm run example -- example/inputs.tsx
-$ npm run example -- example/file.tsx
-$ npm run example -- example/multipleWindows.tsx
-$ npm run example -- example/scroll.tsx
-$ npm run example -- example/activityIndicator.tsx
-```
 
 ## Features
+
+- [x] Run application without any compilation or other native dependencies. 
+  - Library contains compiled code for all systems.
+- [x] Multiple windows.
+- [x] File drop component.
+- [x] Implementation all basic `react-native` components.
+- [x] Animations.
+- [ ] Building application for all systems anywhere.
 
 ### Basic components from react-native
 
@@ -68,6 +61,22 @@ Powered by CSS3 animation defined inline just in `style` prop.
         100: { transform: [{ rotate: "360deg" }] },
     },
 }} />
+```
+
+## Run examples
+
+Clone repository and...
+
+```
+$ npm run example -- example/hello.tsx
+$ npm run example -- example/counter.tsx
+$ npm run example -- example/calculator.tsx
+$ npm run example -- example/images.tsx
+$ npm run example -- example/inputs.tsx
+$ npm run example -- example/file.tsx
+$ npm run example -- example/multipleWindows.tsx
+$ npm run example -- example/scroll.tsx
+$ npm run example -- example/activityIndicator.tsx
 ```
 
 ## Background
