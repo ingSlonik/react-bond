@@ -1,7 +1,7 @@
 {
-  "name": "react-neutron",
+  "name": "react-bond",
   "version": "0.1.0",
-  "description": "react-neutron is a framework for building cross-platform lightweight desktop apps with the React.",
+  "description": "react-bond is a library for building cross-platform lightweight desktop apps with the React.",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "scripts": {
@@ -12,7 +12,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ingSlonik/react-neutron.git"
+    "url": "git+https://github.com/ingSlonik/react-bond.git"
   },
   "keywords": [
     "react",
@@ -23,9 +23,9 @@
   "author": "Filip Paulů",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/ingSlonik/react-neutron/issues"
+    "url": "https://github.com/ingSlonik/react-bond/issues"
   },
-  "homepage": "https://github.com/ingSlonik/react-neutron#readme",
+  "homepage": "https://github.com/ingSlonik/react-bond#readme",
   "dependencies": {
     "native-webview": "^0.4.0",
     "react": "^17.0.2",

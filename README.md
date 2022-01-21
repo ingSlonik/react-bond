@@ -1,12 +1,12 @@
-# react-neutron
+# react-bond
 
-react-neutron is a framework for building cross-platform lightweight desktop apps with the React.
+`react-bond` is a library for building cross-platform lightweight desktop apps with the React.
 
 ## Usage
 
 ```js
 import React from "react";
-import { render, Window, View, Text } from "react-neutron";
+import { render, Window, View, Text } from "react-bond";
 
 render(<Window title="Hello app" width={420} height={150}>
     <View style={{ flexGrow: 1, justifyContent: "center" }}>
