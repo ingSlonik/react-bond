@@ -14,3 +14,4 @@ export { Input } from "./components/Input";
 export { ActivityIndicator, ActivityIndicatorProps } from "./components/ActivityIndicator";
 export { Button, ButtonProps } from "./components/Button";
 export { TextInput, TextInputProps } from "./components/TextInput";
+export { Switch, SwitchProps } from "./components/Switch";
