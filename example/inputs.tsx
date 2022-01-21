@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import { render, Window, View, Text, Input } from "../src";
+import { render, Window, View, Text, Input, Switch } from "../src";
 
-render(<Window title="Inputs examples" width={420} height={640}>
+render(<Window title="Inputs examples" width={420} height={660}>
     <View style={{ flexGrow: 1, alignItems: "flex-start", padding: 16 }}>
         <InputsExample />
     </View>
@@ -12,6 +12,7 @@ function InputsExample() {
     const [date, setDate] = useState("2021-12-21");
     const [time, setTime] = useState("21:12");
     const [number, setNumber] = useState(21);
+    const [bool, setBool] = useState(false);
 
     return <>
         <H1>Inputs</H1>
@@ -40,6 +41,9 @@ function InputsExample() {
         <H2>Range</H2>
         <Input.Range value={number} step={0.5} min={0} max={21} onChange={setNumber} />
 
+        <H2>Switch</H2>
+        <Switch value={bool} onValueChange={setBool} />
+        <Switch disabled value={bool} onValueChange={setBool} />
     </>;
 }
 
