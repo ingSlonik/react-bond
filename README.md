@@ -17,7 +17,6 @@ render(<Window title="Hello app" width={420} height={150}>
 </Window>);
 ```
 
-
 ## Features
 
 - [x] Run application without any compilation or other native dependencies. 
@@ -26,6 +25,7 @@ render(<Window title="Hello app" width={420} height={150}>
 - [x] File drop component.
 - [x] Implementation all basic `react-native` components.
 - [x] Animations.
+- [ ] Hot reload.
 - [ ] Building application for all systems anywhere.
 
 ### Basic components from react-native
