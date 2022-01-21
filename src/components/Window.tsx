@@ -166,6 +166,8 @@ export function getFrontendProps(id: string, props: Props): FrontendProps {
                 propsWithListeners[tagLowerCase] = tag;
                 eventListener[id][tag] = value;
             }
+        } else if (tag.startsWith("inner")) {
+            propsWithListeners[tag] = value;
         } else {
             propsWithListeners[tagLowerCase] = value;
         }
