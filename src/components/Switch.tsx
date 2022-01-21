@@ -23,8 +23,8 @@ export function Switch({
 }: SwitchProps): JSX.Element {
     return <Pressable
         onPress={() => {
-            onChange && onChange(!value);
-            onValueChange && onValueChange(!value);
+            !disabled && onChange && onChange(!value);
+            !disabled && onValueChange && onValueChange(!value);
         }}
         style={{
             width: 48,
@@ -32,6 +32,8 @@ export function Switch({
             backgroundColor: value ? thumbColor.true : thumbColor.false,
             borderRadius: 12,
             transitionDuration,
+            opacity: disabled ? 0.5 : 1,
+            marginBottom: 2,
         }}
     >
         <View style={{
