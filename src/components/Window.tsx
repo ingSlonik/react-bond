@@ -140,11 +140,12 @@ export function updateWindow(nwv: NativeWebView, props: Omit<WindowProps, "child
             case "minSize": nwv.set("minInnerSize", value); continue;
             case "maxSize": nwv.set("maxInnerSize", value); continue;
             case "position": nwv.set("outerPosition", value); continue;
-            case "alwaysOnTop": nwv.set("alwaysOnTop", { always: value });
-            case "decorations": nwv.set("decorations", { decorations: value });
-            case "fullscreen": nwv.set("fullscreen", { fullscreen: value });
-            case "maximized": nwv.set("maximized", { maximized: value });
-            case "minimized": nwv.set("minimized", { minimized: value });
+            case "alwaysOnTop": nwv.set("alwaysOnTop", { always: value }); continue;
+            case "decorations": nwv.set("decorations", { decorations: value }); continue;
+            case "fullscreen": nwv.set("fullscreen", { fullscreen: value }); continue;
+            case "maximized": nwv.set("maximized", { maximized: value }); continue;
+            case "minimized": nwv.set("minimized", { minimized: value }); continue;
+            default: console.error(new Error(`Unknown window prop "${key}".`));
         }
     }
 }
