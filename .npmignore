@@ -1,0 +1,8 @@
+dist/
+example/
+node_modules/
+src/
+.gitignore
+.DS_Store
+package-lock.json
+tsconfig.json
