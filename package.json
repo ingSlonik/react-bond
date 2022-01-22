@@ -7,8 +7,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "example": "ts-node",
-    "build": "tsc src/index.tsx --outDir lib --target esnext --module commonjs --esModuleInterop true --jsx react --sourceMap true --declaration true",
-    "build-example": "tsc example/calculator.tsx --outDir example/lib --target esnext --module commonjs --esModuleInterop true --jsx react"
+    "build": "tsc src/index.ts --outDir lib --target esnext --module commonjs --esModuleInterop true --jsx react --sourceMap true --declaration true"
   },
   "repository": {
     "type": "git",
