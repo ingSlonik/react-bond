@@ -1,17 +1,14 @@
-import { resolve } from "path";
+import { CSSProperties } from "react";
 
+import { applyRenderListenersEnd } from "./render";
 import { appendElement, getWindow, removeElement, updateElement, updateWindow } from "./components/Window";
 
-import { CSSProperties } from "react";
 import { Instance, WindowInstance, Type, Props, WindowProps, Container, LayoutStyle, ViewStyle, TextStyle } from "./types";
 
 export function createWindowInstance(type: "window", props: WindowProps, rootContainer: Container): WindowInstance {
     const window = getWindow(props);
 
-    // not await, render ends itself 
-    window.run();
-
-    return {
+    const windowInstance: WindowInstance = {
         id: "root",
         type,
         props,
@@ -19,6 +16,13 @@ export function createWindowInstance(type: "window", props: WindowProps, rootCon
         parent: null,
         children: [],
     };
+
+    window.run().then(() => {
+        // TODO: remove children windows
+        removeWindowToContainer(rootContainer, windowInstance);
+    });
+
+    return windowInstance;
 }
 
 export function createInstance(type: Exclude<Type, "window">, props: Props, rootContainer: Container): Instance {
@@ -29,6 +33,23 @@ export function createInstance(type: Exclude<Type, "window">, props: Props, root
         parent: null,
         children: [],
     };
+}
+
+export function appendWindowToContainer(container: Container, windowInstance: WindowInstance) {
+    container.state = "running";
+    container.windows.push(windowInstance);
+}
+
+export function removeWindowToContainer(container: Container, windowInstance: WindowInstance) {
+    const index = container.windows.indexOf(windowInstance);
+    if (index < 0) throw new Error("Window cannot be removed from container, because it is not there.");
+    container.windows.splice(index, 1);
+
+    if (container.windows.length < 1) {
+        // End render
+        container.state = "end";
+        applyRenderListenersEnd();
+    }
 }
 
 export function appendInitial(parent: Instance, child: Instance) {

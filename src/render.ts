@@ -1,12 +1,14 @@
 import { ReactNode } from "react";
 import ReactReconciler from "react-reconciler";
 
-import { appendInitial, createInstance, createWindowInstance, finalizeInitialChildren, removeInstance, updateInstance } from "./instance";
+import { appendInitial, appendWindowToContainer, createInstance, createWindowInstance, finalizeInitialChildren, removeInstance, updateInstance } from "./instance";
 import { createContainer } from "./container";
 
 import { getHotElement } from "./HotReload";
 
 import { Type, Container, Instance, RenderProps, Props, WindowProps } from "./types";
+
+const renderListenerEnd: (() => void)[] = [];
 
 type TextInstance = Instance;
 type SuspenseInstance = Instance;
@@ -105,7 +107,7 @@ const reconciler = ReactReconciler<
     clearContainer(container) { },
     appendChildToContainer(container, child) {
         if (child.type === "window") {
-            container.windows.push(child);
+            appendWindowToContainer(container, child);
         } else {
             throw new Error("You cannot add elements outside of window.")
         }
@@ -134,7 +136,13 @@ const reconciler = ReactReconciler<
     insertBefore(parentInstance, child, beforeChild) { },
 });
 
-export function render(children: ReactNode) {
+/**
+ * Only one render in runtime!
+ * 
+ * @param children 
+ * @returns 
+ */
+export function render(children: ReactNode): null | Container {
     const element = getHotElement(children);
 
     if (element) {
@@ -142,5 +150,16 @@ export function render(children: ReactNode) {
         reconciler.updateContainer(element, container, null, null);
 
         return container;
+    } else {
+        // hot reload render
+        return null;
     }
+}
+
+export function addRenderListenerEnd(callback: () => void) {
+    renderListenerEnd.push(callback);
+}
+
+export function applyRenderListenersEnd() {
+    renderListenerEnd.forEach(listener => listener());
 }
