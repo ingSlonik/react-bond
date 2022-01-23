@@ -1,7 +1,10 @@
+import { ReactNode } from "react";
 import ReactReconciler from "react-reconciler";
 
 import { appendInitial, createInstance, createWindowInstance, finalizeInitialChildren, removeInstance, updateInstance } from "./instance";
 import { createContainer } from "./container";
+
+import { getHotElement } from "./HotReload";
 
 import { Type, Container, Instance, RenderProps, Props, WindowProps } from "./types";
 
@@ -131,7 +134,13 @@ const reconciler = ReactReconciler<
     insertBefore(parentInstance, child, beforeChild) { },
 });
 
-export function render(children: JSX.Element) {
-    const container = reconciler.createContainer(createContainer(), 0, false, null);
-    reconciler.updateContainer(children, container, null, null);
+export function render(children: ReactNode) {
+    const element = getHotElement(children);
+
+    if (element) {
+        const container = reconciler.createContainer(createContainer(), 0, false, null);
+        reconciler.updateContainer(element, container, null, null);
+
+        return container;
+    }
 }
