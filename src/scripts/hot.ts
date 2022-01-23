@@ -2,7 +2,7 @@
 
 const Module = require("module");
 const { resolve } = require("path");
-const { existsSync, readFileSync, watchFile, lstatSync } = require("fs");
+const { existsSync, readFileSync, watchFile, unwatchFile, lstatSync } = require("fs");
 
 const { useState } = require("react");
 
@@ -10,6 +10,8 @@ const requireExtensions = [".js", ".ts", ".tsx"];
 
 const appPath = process.argv[2];
 const absoluteAppPath = resolve(process.cwd(), appPath);
+
+const watchedFiles = [];
 
 if (!appPath) throw new Error("There is not set entry file as first command argument.");
 if (!existsSync(absoluteAppPath)) throw new Error(`Entry file "${absoluteAppPath}" doesn't exist.`);
@@ -41,10 +43,19 @@ Module.wrap = function (js) {
 };
 
 exports.hot = hot;
+exports.watchFile = watch;
 
 // RUN
 console.log("");
 require(absoluteAppPath);
+
+const { addRenderListenerEnd } = hotReloadRequire(require, __dirname)("../render");
+addRenderListenerEnd(() => {
+    watchedFiles.forEach(file => {
+        console.log("Unwatch file:", file);
+        unwatchFile(file);
+    });
+});
 
 function compile(source) {
     if (typeScriptConfig) {
@@ -75,11 +86,7 @@ function hotReloadRequire(originalRequire, __dirname) {
                 });
 
                 if (Object.keys(hotComponents).length > 0) {
-                    console.log("Watch file:", fullPath);
-                    watchFile(fullPath, { interval: 350 }, () => {
-                        delete originalRequire.cache[originalRequire.resolve(fullPath)];
-                        const newModule = originalRequire(fullPath);
-
+                    watch(fullPath, (newModule) => {
                         for (const name in hotComponents) {
                             hotComponents[name]._reactBondHotUpdate(newModule[name]);
                         }
@@ -102,6 +109,18 @@ function hotReloadRequire(originalRequire, __dirname) {
     };
 
     return require;
+}
+
+function watch(path, callback) {
+    console.log("Watch file:", path);
+    watchedFiles.push(path);
+
+    watchFile(path, { interval: 350 }, () => {
+        delete require.cache[require.resolve(path)];
+        const newModule = require(path);
+
+        callback(newModule);
+    });
 }
 
 function hot(component) {

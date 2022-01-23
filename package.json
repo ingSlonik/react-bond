@@ -5,11 +5,11 @@
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "bin": {
-    "react-bond-hot": "./scripts/hot.js"
+    "react-bond-hot": "./lib/scripts/hot.js"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "example": "node scripts/hot.js",
+    "example": "node src/scripts/hot.js",
     "build": "tsc src/index.ts --outDir lib --target esnext --module commonjs --esModuleInterop true --jsx react --sourceMap true --declaration true"
   },
   "repository": {
