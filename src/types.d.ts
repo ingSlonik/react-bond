@@ -4,7 +4,8 @@ import { WindowProps as WindowPropsComponent, WindowType as Window } from "./com
 type Type = "window" | "div" | "span" | "img" | "input" | "textarea" | "svg"; // ,...
 
 export type Container = {
-    windows: Instance[],
+    state: "init" | "running" | "end",
+    windows: WindowInstance[],
 };
 
 export type WindowInstance = {
