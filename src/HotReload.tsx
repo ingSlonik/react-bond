@@ -1,7 +1,6 @@
-import { watchFile } from "fs";
 import React, { ReactNode } from "react";
 
-// TODO: for more renderers
+// Only one render in one runtime.
 let renderedComponent: null | { _reactBondHotUpdate?: (component: ReactNode) => void } = null;
 
 export function getHotElement(children: ReactNode): null | ReactNode {
@@ -13,18 +12,12 @@ export function getHotElement(children: ReactNode): null | ReactNode {
     }
 
     if (isHotReloading()) {
-        const { hot } = require("../scripts/hot");
+        const { watchFile, hot } = require("./scripts/hot");
         MainComponent = hot(MainComponent);
         // @ts-ignore
         renderedComponent = MainComponent;
 
-        const entryPath = global._reactBondEntryPath;
-        console.log("Watch file:", entryPath);
-        watchFile(entryPath, { interval: 350 }, () => {
-            // @ts-ignore
-            require.deleteCache?.(entryPath);
-            require(entryPath);
-        });
+        watchFile(global._reactBondEntryPath, () => { });
     }
 
     // @ts-ignore
