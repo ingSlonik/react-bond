@@ -25,7 +25,7 @@ render(<Window title="Hello app" width={420} height={150}>
 - [x] File drop component.
 - [x] Implementation all basic `react-native` components.
 - [x] Animations.
-- [ ] Hot reload.
+- [x] Hot reloading.
 - [ ] Building application for all systems anywhere.
 
 ### Basic components from react-native
@@ -61,6 +61,17 @@ Powered by CSS3 animation defined inline just in `style` prop.
         100: { transform: [{ rotate: "360deg" }] },
     },
 }} />
+```
+
+### Hot reloading
+
+package.json
+```json
+{
+    "scripts": {
+        "start": "react-bond-hot src/index.tsx"
+    }
+}
 ```
 
 ## Run examples
