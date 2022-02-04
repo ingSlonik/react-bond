@@ -9,8 +9,9 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "example": "node src/scripts/hot.js",
-    "build": "tsc src/index.ts --outDir lib --target esnext --module commonjs --esModuleInterop true --jsx react --sourceMap true --declaration true"
+    "example": "npm run build:scripts && node lib/scripts/hot.js",
+    "build": "npm run build:scripts && tsc src/index.ts --outDir lib --target esnext --module commonjs --esModuleInterop true --jsx react --sourceMap true --declaration true",
+    "build:scripts": "tsc src/scripts/hot.ts --outDir lib/scripts --noImplicitUseStrict --target esnext --module commonjs --esModuleInterop true --jsx react"
   },
   "repository": {
     "type": "git",
