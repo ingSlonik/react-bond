@@ -88,6 +88,7 @@ $ npm run example -- example/file.tsx
 $ npm run example -- example/multipleWindows.tsx
 $ npm run example -- example/scroll.tsx
 $ npm run example -- example/activityIndicator.tsx
+$ npm run example -- example/hotReload.tsx
 ```
 
 ## Background
