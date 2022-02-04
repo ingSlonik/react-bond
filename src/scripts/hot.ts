@@ -1,31 +1,32 @@
-#!/usr/bin/env node
+// #!/usr/bin/env node
 
-const Module = require("module");
-const { resolve } = require("path");
-const { existsSync, readFileSync, watchFile, unwatchFile, lstatSync } = require("fs");
+import Module from "module";
+import { resolve } from "path";
+import { existsSync, readFileSync, watchFile, unwatchFile, lstatSync } from "fs";
 
-const { useState } = require("react");
+import { useState } from "react";
 
-const requireExtensions = [".js", ".ts", ".tsx"];
+const requireExtensions = [".js", ".ts", ".tsx", ".json"];
 
-const appPath = process.argv[2];
-const absoluteAppPath = resolve(process.cwd(), appPath);
+const entryPath = process.argv[2];
+const absoluteEntryPath = resolve(process.cwd(), entryPath);
 
-const watchedFiles = [];
+const watchedFiles: string[] = [];
 
-if (!appPath) throw new Error("There is not set entry file as first command argument.");
-if (!existsSync(absoluteAppPath)) throw new Error(`Entry file "${absoluteAppPath}" doesn't exist.`);
+if (!entryPath) throw new Error("There is not set entry file as first command argument.");
+if (!existsSync(absoluteEntryPath)) throw new Error(`Entry file "${absoluteEntryPath}" doesn't exist.`);
 
 console.log("✓ react-bond hot reloading is turned on.");
 global._reactBondHotReload = true;
-global._reactBondEntryPath = absoluteAppPath;
+global._reactBondUnwatchFiles = unwatch;
+global._reactBondEntryPath = absoluteEntryPath;
 global._reactBondGetHotRequire = hotReloadRequire;
 
 let typeScriptConfig = null;
 const tsconfigPath = resolve(process.cwd(), "tsconfig.json");
 if (existsSync(tsconfigPath)) {
-    const { transpileModule, readJsonConfigFile, readConfigFile, findConfigFile } = require("typescript");
-    const options = readConfigFile(tsconfigPath, path => readFileSync(path, "utf8"));
+    const { readConfigFile } = require("typescript");
+    const options = readConfigFile(tsconfigPath, (path: string) => readFileSync(path, "utf8"));
     typeScriptConfig = options.config;
 }
 
@@ -35,29 +36,20 @@ if (typeScriptConfig) {
     console.log("- Without TypeScript compilation.");
 }
 
-Module.wrap = function (js) {
-    return `${Module.wrapper[0]}
+Module.wrap = (code) => {
+    return `(function (exports, require, module, __filename, __dirname) {
     require = global._reactBondGetHotRequire(require, __dirname);
-    ${compile(js)}
-    ${Module.wrapper[1]}`;
+    ${compile(code)}
+    });`;
 };
-
-exports.hot = hot;
-exports.watchFile = watch;
 
 // RUN
 console.log("");
-require(absoluteAppPath);
+require(absoluteEntryPath);
 
-const { addRenderListenerEnd } = hotReloadRequire(require, __dirname)("../render");
-addRenderListenerEnd(() => {
-    watchedFiles.forEach(file => {
-        console.log("Unwatch file:", file);
-        unwatchFile(file);
-    });
-});
+watch(absoluteEntryPath, () => console.log("Entry file was changed, whole application is reloading."));
 
-function compile(source) {
+function compile(source: string): string {
     if (typeScriptConfig) {
         const result = require("typescript").transpileModule(source, typeScriptConfig);
         return result.outputText;
@@ -66,22 +58,21 @@ function compile(source) {
     }
 }
 
-function hotReloadRequire(originalRequire, __dirname) {
-    const require = (path) => {
+function hotReloadRequire(originalRequire: NodeRequire, __dirname: string): NodeRequire {
+    const require = (path: string): any => {
         if (path.startsWith(".") || path.startsWith("/")) {
 
             const fullPath = getPathWithExtension(resolve(path.startsWith(".") ? __dirname : process.cwd(), path));
             if (!fullPath.includes("node_modules")) {
-                const module = originalRequire(fullPath);
+                const originalModule = originalRequire(fullPath);
 
                 const hotComponents = {};
-                Object.entries(module).forEach(([name, component]) => {
-                    const name0 = name.charAt(0);
-                    if (typeof component === "function" && (name === "default" || name0 === name0.toUpperCase())) {
+                Object.entries(originalModule).forEach(([name, component]) => {
+                    if (typeof component === "function" && (name === "default" || startsWithCapital(name))) {
                         // can by react component
                         const hotComponent = hot(component);
                         hotComponents[name] = hotComponent;
-                        module[name] = hotComponent;
+                        // originalModule[name] = hotComponent;
                     }
                 });
 
@@ -93,7 +84,10 @@ function hotReloadRequire(originalRequire, __dirname) {
                     });
                 }
 
-                return module;
+                return {
+                    ...originalModule,
+                    ...hotComponents,
+                };
             } else {
                 return originalRequire(fullPath);
             }
@@ -104,38 +98,53 @@ function hotReloadRequire(originalRequire, __dirname) {
 
     require.cache = originalRequire.cache;
     require.resolve = originalRequire.resolve;
-    require.deleteCache = (path) => {
+    require.extensions = originalRequire.extensions;
+    require.main = originalRequire.main;
+    require.deleteCache = (path: string) => {
         delete originalRequire.cache[originalRequire.resolve(path)];
     };
 
     return require;
 }
 
-function watch(path, callback) {
-    console.log("Watch file:", path);
-    watchedFiles.push(path);
+function watch(path: string, callback: (module: any) => void) {
+    if (!watchedFiles.includes(path)) {
+        console.log("Watch file:", path);
+        watchedFiles.push(path);
 
-    watchFile(path, { interval: 350 }, () => {
-        delete require.cache[require.resolve(path)];
-        const newModule = require(path);
+        watchFile(path, { interval: 500 }, () => {
+            delete require.cache[require.resolve(path)];
+            const newModule = require(path);
 
-        callback(newModule);
+            callback(newModule);
+        });
+    }
+}
+
+function unwatch() {
+    watchedFiles.forEach(file => {
+        console.log("Unwatch file:", file);
+        unwatchFile(file);
     });
 }
 
-function hot(component) {
+function hot(component: Function): Function {
     const hotComponent = function () {
         const component = hotComponent._reactBondHotComponent;
 
-        const [_, setReload] = useState(0);
-        hotComponent._reactBondHotReload = () => setReload(r => r + 1);
+        const [_, setReload] = useState({});
+        hotComponent._reactBondHotReload = () => setReload({});
 
         return component.apply(this, arguments);
     };
 
+    for (const key in component) {
+        hotComponent[key] = component[key];
+    }
+
     hotComponent._reactBondHotComponent = component;
     hotComponent._reactBondHotReload = null;
-    hotComponent._reactBondHotUpdate = (component) => {
+    hotComponent._reactBondHotUpdate = (component: Function) => {
         console.log(new Date(), "Hot reload component:", component?.name);
         hotComponent._reactBondHotComponent = component;
         hotComponent._reactBondHotReload?.();
@@ -144,11 +153,11 @@ function hot(component) {
     return hotComponent;
 }
 
-function startsWithCapital(word) {
-    return word.charAt(0) === word.charAt(0).toUpperCase()
+function startsWithCapital(word: string): boolean {
+    return word.charAt(0) === word.charAt(0).toUpperCase();
 }
 
-function getPathWithExtension(path) {
+function getPathWithExtension(path: string): string {
     if (existsSync(path)) {
         if (isDirectory(path)) {
             return getPathWithExtension(resolve(path, "index"));
@@ -165,6 +174,6 @@ function getPathWithExtension(path) {
     throw new Error(`Required file "${path}" doesn't exist.`);
 }
 
-function isDirectory(path) {
+function isDirectory(path: string): boolean {
     return existsSync(path) && lstatSync(path).isDirectory();
 }

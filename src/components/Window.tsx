@@ -128,6 +128,10 @@ export function getWindow(
     return window;
 }
 
+export function closeWindow(nwv: NativeWebView) {
+    nwv.close();
+}
+
 export function updateWindow(nwv: NativeWebView, props: Omit<WindowProps, "children">) {
     for (const key in props) {
         const value = props[key];

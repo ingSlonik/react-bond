@@ -1,14 +1,11 @@
 import { ReactNode } from "react";
-import ReactReconciler from "react-reconciler";
+import ReactReconciler, { OpaqueRoot } from "react-reconciler";
 
 import { appendInitial, appendWindowToContainer, createInstance, createWindowInstance, finalizeInitialChildren, removeInstance, updateInstance } from "./instance";
 import { createContainer } from "./container";
 
-import { getHotElement } from "./HotReload";
-
 import { Type, Container, Instance, RenderProps, Props, WindowProps } from "./types";
-
-const renderListenerEnd: (() => void)[] = [];
+import { closeWindow } from "./components/Window";
 
 type TextInstance = Instance;
 type SuspenseInstance = Instance;
@@ -45,7 +42,7 @@ const reconciler = ReactReconciler<
     },
     createInstance(type, { children, ...props }, rootContainer, hostContext, internalHandle) {
         if (type === "window") {
-            return createWindowInstance(type, props as WindowProps, rootContainer);
+            return createWindowInstance(type, props as WindowProps, rootContainer, onStateEnd);
         } else {
             if (hostContext === "container") {
                 throw new Error("Create element without window?");
@@ -136,30 +133,40 @@ const reconciler = ReactReconciler<
     insertBefore(parentInstance, child, beforeChild) { },
 });
 
-/**
- * Only one render in runtime!
- * 
- * @param children 
- * @returns 
- */
-export function render(children: ReactNode): null | Container {
-    const element = getHotElement(children);
+// only for hot reload
+let renderContainer: null | Container = null;
+let isReloading = false;
 
-    if (element) {
-        const container = reconciler.createContainer(createContainer(), 0, false, null);
-        reconciler.updateContainer(element, container, null, null);
+export function render(children: ReactNode): OpaqueRoot {
+    const container = createContainer();
+    const opaqueRoot = reconciler.createContainer(container, 0, false, null);
+    reconciler.updateContainer(children, opaqueRoot, null, null);
 
-        return container;
-    } else {
-        // hot reload render
-        return null;
+    if (global._reactBondHotReload === true) {
+        if (renderContainer !== null) {
+            isReloading = true;
+            exitRender(renderContainer);
+        }
+        renderContainer = container;
     }
+
+    return opaqueRoot;
 }
 
-export function addRenderListenerEnd(callback: () => void) {
-    renderListenerEnd.push(callback);
+export function exitRender(container: Container) {
+    container.windows.forEach(win => closeWindow(win.window.nwv));
 }
 
-export function applyRenderListenersEnd() {
-    renderListenerEnd.forEach(listener => listener());
+export function getContainerFromRender(render: OpaqueRoot): Container {
+    return render.containerInfo();
+}
+
+export function onStateEnd() {
+    if (global._reactBondHotReload === true) {
+        if (isReloading) {
+            isReloading = false;
+        } else {
+            global._reactBondUnwatchFiles();
+        }
+    }
 }

@@ -1,11 +1,10 @@
 import { CSSProperties } from "react";
 
-import { applyRenderListenersEnd } from "./render";
 import { appendElement, getWindow, removeElement, updateElement, updateWindow } from "./components/Window";
 
 import { Instance, WindowInstance, Type, Props, WindowProps, Container, LayoutStyle, ViewStyle, TextStyle } from "./types";
 
-export function createWindowInstance(type: "window", props: WindowProps, rootContainer: Container): WindowInstance {
+export function createWindowInstance(type: "window", props: WindowProps, rootContainer: Container, onStateEnd: () => void): WindowInstance {
     const window = getWindow(props);
 
     const windowInstance: WindowInstance = {
@@ -19,7 +18,7 @@ export function createWindowInstance(type: "window", props: WindowProps, rootCon
 
     window.run().then(() => {
         // TODO: remove children windows
-        removeWindowToContainer(rootContainer, windowInstance);
+        removeWindowToContainer(rootContainer, windowInstance, onStateEnd);
     });
 
     return windowInstance;
@@ -40,7 +39,7 @@ export function appendWindowToContainer(container: Container, windowInstance: Wi
     container.windows.push(windowInstance);
 }
 
-export function removeWindowToContainer(container: Container, windowInstance: WindowInstance) {
+export function removeWindowToContainer(container: Container, windowInstance: WindowInstance, onStateEnd: () => void) {
     const index = container.windows.indexOf(windowInstance);
     if (index < 0) throw new Error("Window cannot be removed from container, because it is not there.");
     container.windows.splice(index, 1);
@@ -48,7 +47,7 @@ export function removeWindowToContainer(container: Container, windowInstance: Wi
     if (container.windows.length < 1) {
         // End render
         container.state = "end";
-        applyRenderListenersEnd();
+        onStateEnd();
     }
 }
 
