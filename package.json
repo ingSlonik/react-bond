@@ -1,6 +1,6 @@
 {
   "name": "react-bond",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "react-bond is a library for building cross-platform lightweight desktop apps with the React.",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
