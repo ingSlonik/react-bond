@@ -11,7 +11,7 @@ import { render, Window, View, Text } from "react-bond";
 render(<Window title="Hello app" width={420} height={150}>
     <View style={{ flexGrow: 1, justifyContent: "center" }}>
         <Text style={{ color: "#888", fontSize: 32, textAlign: "center" }}>
-            Hello, I am react-neutorn.
+            Hello, I am react-bond.
         </Text>
     </View>
 </Window>);
