@@ -1,4 +1,4 @@
-// #!/usr/bin/env node
+#!/usr/bin/env node
 
 import Module from "module";
 import { resolve } from "path";
@@ -6,14 +6,13 @@ import { existsSync, readFileSync, watchFile, unwatchFile, lstatSync } from "fs"
 
 import { useState } from "react";
 
+const watchedFiles: string[] = [];
 const requireExtensions = [".js", ".ts", ".tsx", ".json"];
 
 const entryPath = process.argv[2];
-const absoluteEntryPath = resolve(process.cwd(), entryPath);
-
-const watchedFiles: string[] = [];
-
 if (!entryPath) throw new Error("There is not set entry file as first command argument.");
+
+const absoluteEntryPath = resolve(process.cwd(), entryPath);
 if (!existsSync(absoluteEntryPath)) throw new Error(`Entry file "${absoluteEntryPath}" doesn't exist.`);
 
 console.log("✓ react-bond hot reloading is turned on.");
