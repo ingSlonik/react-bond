@@ -15,3 +15,6 @@ export { ActivityIndicator, ActivityIndicatorProps } from "./components/Activity
 export { Button, ButtonProps } from "./components/Button";
 export { TextInput, TextInputProps } from "./components/TextInput";
 export { Switch, SwitchProps } from "./components/Switch";
+
+// others component
+export { ErrorBoundary } from "./components/ErrorBoundary";
