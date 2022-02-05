@@ -5,8 +5,9 @@
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "bin": {
-    "react-bond-hot": "./lib/scripts/hot.js",
-    "create-react-bond-app": "lib/scripts/createApp.js"
+    "react-bond": "lib/scripts/createApp.js",
+    "create-react-bond-app": "lib/scripts/createApp.js",
+    "react-bond-hot": "./lib/scripts/hot.js"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",

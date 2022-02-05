@@ -20,7 +20,7 @@ render(<Window title="Hello app" width={420} height={150}>
 ## Create app
 
 ```bash
-$ npx create-react-bond-app my-app
+$ npx react-bond my-app
 ```
 
 That's all folks.
