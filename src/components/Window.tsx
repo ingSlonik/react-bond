@@ -2,6 +2,9 @@ import { resolve } from "path";
 import NativeWebView from "native-webview";
 
 import React, { ReactNode } from "react";
+
+import { DevelopmentErrorBoundary } from "./ErrorBoundary";
+
 import { Type, Props } from "../types";
 
 // ------------ Component -------------
@@ -34,7 +37,7 @@ export type WindowProps = {
 
 export function Window({ children, icon = null, ...props }: WindowProps): JSX.Element {
     // @ts-ignore
-    return <window icon={icon} {...props}>{children}</window>;
+    return <window icon={icon} {...props}><DevelopmentErrorBoundary>{children}</DevelopmentErrorBoundary></window>;
 }
 
 // ------------ Backend -------------
@@ -101,6 +104,7 @@ export function getWindow(
                     nwv.eval(remove.toString());
 
                     window.loadingQueue.forEach(js => nwv.eval(js));
+                    window.loadingQueue = [];
 
                 } else if (message.type === "event") {
                     const listener = eventListener[message.id]?.[message.eventType];
