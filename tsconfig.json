@@ -1,6 +1,6 @@
 {
     "compilerOptions": {
-        "target": "esnext",
+        "target": "es2020",
         "module": "commonjs",
         "outDir": "lib",
         "declaration": true,
@@ -11,6 +11,6 @@
     },
     "include": [
         "src/",
-        "example/" 
+        "example/"
     ]
 }
