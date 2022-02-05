@@ -1,10 +1,11 @@
-import { ReactNode } from "react";
+import React, { ReactNode } from "react";
 import ReactReconciler, { OpaqueRoot } from "react-reconciler";
 
 import { appendInitial, appendWindowToContainer, createInstance, createWindowInstance, finalizeInitialChildren, removeInstance, updateInstance } from "./instance";
 import { createContainer } from "./container";
 
 import { Type, Container, Instance, RenderProps, Props, WindowProps } from "./types";
+
 import { closeWindow } from "./components/Window";
 
 type TextInstance = Instance;
@@ -62,6 +63,11 @@ const reconciler = ReactReconciler<
         appendInitial(parentInstance, child);
         finalizeInitialChildren(parentInstance);
     },
+    insertBefore(parentInstance, child, beforeChild) {
+        // TODO: use beforeChild
+        appendInitial(parentInstance, child);
+        finalizeInitialChildren(parentInstance);
+    },
     cancelTimeout(id) {
         clearTimeout(id);
     },
@@ -109,9 +115,7 @@ const reconciler = ReactReconciler<
             throw new Error("You cannot add elements outside of window.")
         }
     },
-    commitMount(instance, type, props, internalInstanceHandle) {
-        // console.log("commit", instance.children);
-    },
+    commitMount(instance, type, props, internalInstanceHandle) { },
     commitUpdate(instance, updatePayload, type, oldProps, newProps, finishedWork) {
         updateInstance(instance, updatePayload);
     },
@@ -130,7 +134,6 @@ const reconciler = ReactReconciler<
     removeChildFromContainer(container, child) {
         // TODO: remove window
     },
-    insertBefore(parentInstance, child, beforeChild) { },
 });
 
 // only for hot reload
