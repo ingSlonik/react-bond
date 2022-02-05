@@ -14,7 +14,8 @@
     "example": "npm run build:scripts && node lib/scripts/hot.js",
     "build": "npm run build:scripts && npm run build:copy-types && tsc src/index.ts --outDir lib --target es2020 --module commonjs --esModuleInterop true --jsx react --sourceMap true --declaration true",
     "build:copy-types": "cp -f src/types.d.ts lib/types.d.ts",
-    "build:scripts": "tsc src/scripts/hot.ts src/scripts/createApp.ts --outDir lib/scripts --noImplicitUseStrict --target es2020 --module commonjs --esModuleInterop true"
+    "build:scripts": "tsc src/scripts/hot.ts src/scripts/createApp.ts --outDir lib/scripts --noImplicitUseStrict --target es2020 --module commonjs --esModuleInterop true",
+    "prepublish": "npm run build"
   },
   "repository": {
     "type": "git",
