@@ -17,6 +17,14 @@ render(<Window title="Hello app" width={420} height={150}>
 </Window>);
 ```
 
+## Create app
+
+```bash
+$ npx create-react-bond-app my-app
+```
+
+That's all folks.
+
 ## Features
 
 - [x] Run application without any compilation or other native dependencies. 
@@ -26,6 +34,7 @@ render(<Window title="Hello app" width={420} height={150}>
 - [x] Implementation all basic `react-native` components.
 - [x] Animations.
 - [x] Hot reloading.
+- [x] Create react-bond app script.
 - [ ] Building application for all systems anywhere.
 
 ### Basic components from react-native
