@@ -5,13 +5,16 @@
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "bin": {
-    "react-bond-hot": "./lib/scripts/hot.js"
+    "react-bond-hot": "./lib/scripts/hot.js",
+    "create-react-bond-app": "lib/scripts/createApp.js"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
+    "test:create-app": "npm run build:scripts && rm -f -r ../test-create-react-bond-app && node lib/scripts/createApp.js ../test-create-react-bond-app",
     "example": "npm run build:scripts && node lib/scripts/hot.js",
-    "build": "npm run build:scripts && tsc src/index.ts --outDir lib --target esnext --module commonjs --esModuleInterop true --jsx react --sourceMap true --declaration true",
-    "build:scripts": "tsc src/scripts/hot.ts --outDir lib/scripts --noImplicitUseStrict --target esnext --module commonjs --esModuleInterop true --jsx react"
+    "build": "npm run build:scripts && npm run build:copy-types && tsc src/index.ts --outDir lib --target es2020 --module commonjs --esModuleInterop true --jsx react --sourceMap true --declaration true",
+    "build:copy-types": "cp -f src/types.d.ts lib/types.d.ts",
+    "build:scripts": "tsc src/scripts/hot.ts src/scripts/createApp.ts --outDir lib/scripts --noImplicitUseStrict --target es2020 --module commonjs --esModuleInterop true"
   },
   "repository": {
     "type": "git",
