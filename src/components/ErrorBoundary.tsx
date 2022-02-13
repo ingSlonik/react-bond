@@ -1,6 +1,6 @@
 import React, { Component, ReactNode } from "react";
-import { View } from "..";
 
+import { View } from "./View";
 import { Text } from "./Text";
 
 export type ErrorBoundaryProps = {
