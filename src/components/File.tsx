@@ -1,5 +1,7 @@
 import React, { ReactNode, useState } from "react";
-import { getCSSProperties } from "../instance";
+
+import { getCSSProperties } from "../style";
+
 import { LayoutStyle, ViewStyle, TextStyle } from "../types";
 
 export type FileProps = {
