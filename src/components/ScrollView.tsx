@@ -1,5 +1,6 @@
 import React, { Children, ReactNode } from "react";
-import { getCSSProperties } from "../instance";
+
+import { getCSSProperties } from "../style";
 
 import { LayoutStyle, ViewStyle } from "../types";
 

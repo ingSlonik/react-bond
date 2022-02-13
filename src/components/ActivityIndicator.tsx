@@ -2,8 +2,6 @@
 import React, { useEffect, useState } from "react";
 import { View } from "./View";
 
-import { ViewStyle } from "../types";
-
 export type ActivityIndicatorProps = {
     animating?: boolean,
     color?: string,

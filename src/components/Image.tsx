@@ -1,5 +1,7 @@
-import React, { ReactNode } from "react";
-import { getCSSProperties } from "../instance";
+import React from "react";
+
+import { getCSSProperties } from "../style";
+
 import { SizeProps } from "../types";
 
 export type ImageProps = {

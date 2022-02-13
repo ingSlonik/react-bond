@@ -1,5 +1,7 @@
 import React from "react";
-import { getCSSProperties } from "../instance";
+
+import { getCSSProperties } from "../style";
+
 import { TextStyle, LayoutStyle } from "../types";
 
 type GeneralInputProps = {

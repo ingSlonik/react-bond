@@ -1,5 +1,6 @@
 import React, { ReactNode } from "react";
-import { getCSSProperties } from "../instance";
+import { getCSSProperties } from "../style";
+
 import { TextStyle, AnimationStyle } from "../types";
 
 export type TextProps = {
