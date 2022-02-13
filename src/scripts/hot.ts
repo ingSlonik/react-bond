@@ -3,11 +3,18 @@
 import Module from "module";
 import { resolve, relative } from "path";
 import { existsSync, readFileSync, watchFile, unwatchFile, lstatSync } from "fs";
+import { useEffect, useState } from "react";
 
-import { useState } from "react";
+interface HotFunction {
+    (): any;
+    _reactBondHotFn: Function;
+    _reactBondHotUpdate(fn: Function): void;
+}
 
 const cwd = process.cwd();
 const watchedFiles: string[] = [];
+const listenersOnReload: Function[] = [];
+const hotFunctions: { [path: string]: { [name: string]: HotFunction } } = {};
 const requireExtensions = [".js", ".ts", ".tsx", ".json"];
 
 const entryPath = process.argv[2];
@@ -16,11 +23,12 @@ if (!entryPath) throw new Error("There is not set entry file as first command ar
 const absoluteEntryPath = resolve(cwd, entryPath);
 if (!existsSync(absoluteEntryPath)) throw new Error(`Entry file "${absoluteEntryPath}" doesn't exist.`);
 
-console.log("✓ react-bond hot reloading is turned on.");
 global._reactBondHotReload = true;
 global._reactBondUnwatchFiles = unwatch;
 global._reactBondEntryPath = absoluteEntryPath;
 global._reactBondGetHotRequire = hotReloadRequire;
+
+console.log("✓ react-bond hot reloading is turned on.");
 
 let typeScriptConfig = null;
 const tsconfigPath = resolve(cwd, "tsconfig.json");
@@ -105,32 +113,28 @@ function hotReloadRequire(originalRequire: NodeRequire, __dirname: string): Node
             if (!fullPath.includes("node_modules")) {
                 const originalModule = originalRequire(fullPath);
 
-                const hotFunctions = {};
+                const hotModuleFunctions = {};
                 Object.entries(originalModule).forEach(([name, fn]) => {
-                    if (typeof fn === "function") {
-                        if (name === "default" || startsWithCapital(name)) {
-                            // can by react component
-                            const hotComponent = hot(fn, true);
-                            hotFunctions[name] = hotComponent;
-                        } else {
-                            // all exported functions
-                            const hotFunction = hot(fn, false);
-                            hotFunctions[name] = hotFunction;
-                        }
+                    if (typeof fn === "function" && !isClass(fn)) {
+                        // all exported functions
+                        const hotFunction = createHotFunction(fn, fullPath, name);
+                        hotModuleFunctions[name] = hotFunction;
                     }
                 });
 
                 if (Object.keys(hotFunctions).length > 0) {
                     watch(fullPath, (newModule) => {
-                        for (const name in hotFunctions) {
-                            hotFunctions[name]._reactBondHotUpdate(newModule[name]);
-                        }
+                        Object.entries(newModule).forEach(([name, fn]) => {
+                            if (typeof fn === "function") {
+                                updateHotFunction(fn, fullPath, name);
+                            }
+                        });
                     });
                 }
 
                 return {
                     ...originalModule,
-                    ...hotFunctions,
+                    ...hotModuleFunctions,
                 };
             } else {
                 return originalRequire(fullPath);
@@ -144,9 +148,6 @@ function hotReloadRequire(originalRequire: NodeRequire, __dirname: string): Node
     require.resolve = originalRequire.resolve;
     require.extensions = originalRequire.extensions;
     require.main = originalRequire.main;
-    require.deleteCache = (path: string) => {
-        delete originalRequire.cache[originalRequire.resolve(path)];
-    };
 
     return require;
 }
@@ -174,35 +175,72 @@ function unwatch() {
     stopStdin();
 }
 
-function hot(component: Function, isComponent: boolean): Function {
-    const hotComponent = function () {
-        const component = hotComponent._reactBondHotComponent;
-
-        if (isComponent) {
-            const [_, setReload] = useState({});
-            hotComponent._reactBondHotReload = () => setReload({});
-        }
-
-        return component.apply(this, arguments);
-    };
-
-    for (const key in component) {
-        hotComponent[key] = component[key];
-    }
-
-    hotComponent._reactBondHotComponent = component;
-    hotComponent._reactBondHotReload = null;
-    hotComponent._reactBondHotUpdate = (component: Function) => {
-        console.log(new Date(), "Hot reload component:", component?.name);
-        hotComponent._reactBondHotComponent = component;
-        hotComponent._reactBondHotReload?.();
-    };
-
-    return hotComponent;
+function isClass(variable: any) {
+    return typeof variable === "function" && !variable.hasOwnProperty('arguments');
 }
 
-function startsWithCapital(word: string): boolean {
-    return word.charAt(0) === word.charAt(0).toUpperCase();
+function createHotFunction(fn: Function, path: string, name: string): HotFunction {
+    if (!hotFunctions[path]) hotFunctions[path] = {};
+
+    if (hotFunctions[path][name]) {
+        // component is already created
+        return hotFunctions[path][name];
+    } else {
+        const hotFn = function () {
+            try {
+                const [_, setForceUpdate] = useState({});
+                useEffect(() => {
+                    const reload = () => setForceUpdate({});
+                    addListenerOnReload(reload);
+                    return () => removeListenerOnReload(reload);
+                }, []);
+            } catch (e) {
+                // not react component
+            }
+
+            const fn = hotFn._reactBondHotFn;
+            return fn.apply(this, arguments);
+        };
+
+        for (const key in fn) {
+            hotFn[key] = fn[key];
+        }
+
+        hotFn._reactBondHotFn = fn;
+        hotFn._reactBondHotUpdate = (fn: Function) => {
+            console.log(new Date(), "Hot reload function:", name);
+            hotFn._reactBondHotFn = fn;
+
+            // user changed not react component, to show differences is necessary to re-render all components
+            reloadComponents();
+        };
+
+        hotFunctions[path][name] = hotFn;
+        return hotFn;
+    }
+}
+
+function updateHotFunction(fn: Function, path: string, name: string) {
+    if (!hotFunctions[path]) hotFunctions[path] = {};
+
+    if (hotFunctions[path][name]) {
+        hotFunctions[path][name]._reactBondHotUpdate(fn);
+    } else {
+        console.log("New function created. Press R for include it to hot reloading.")
+        createHotFunction(fn, path, name);
+    }
+}
+
+function addListenerOnReload(fn: Function) {
+    listenersOnReload.push(fn);
+}
+function removeListenerOnReload(fn: Function) {
+    const index = listenersOnReload.indexOf(fn);
+    if (index > -1) listenersOnReload.splice(index, 1);
+}
+
+function reloadComponents() {
+    listenersOnReload.forEach(l => l());
 }
 
 function getPathWithExtension(path: string): string {
