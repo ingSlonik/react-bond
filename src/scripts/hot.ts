@@ -3,7 +3,7 @@
 import Module from "module";
 import { resolve, relative } from "path";
 import { existsSync, readFileSync, watchFile, unwatchFile, lstatSync } from "fs";
-import { useEffect, useState } from "react";
+import React from "react";
 
 interface HotFunction {
     (): any;
@@ -188,12 +188,16 @@ function createHotFunction(fn: Function, path: string, name: string): HotFunctio
     } else {
         const hotFn = function () {
             try {
-                const [_, setForceUpdate] = useState({});
-                useEffect(() => {
-                    const reload = () => setForceUpdate({});
-                    addListenerOnReload(reload);
-                    return () => removeListenerOnReload(reload);
-                }, []);
+                // is react dispatcher set
+                if ((React as any).__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED?.ReactCurrentDispatcher.current) {
+
+                    const [_, setForceUpdate] = React.useState({});
+                    React.useEffect(() => {
+                        const reload = () => setForceUpdate({});
+                        addListenerOnReload(reload);
+                        return () => removeListenerOnReload(reload);
+                    }, []);
+                }
             } catch (e) {
                 // not react component
             }

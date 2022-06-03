@@ -142,7 +142,7 @@ let isReloading = false;
 
 export function render(children: ReactNode): OpaqueRoot {
     const container = createContainer();
-    const opaqueRoot = reconciler.createContainer(container, 0, false, null);
+    const opaqueRoot = reconciler.createContainer(container, 0, null, true, null, "react-bond", console.error, null);
     reconciler.updateContainer(children, opaqueRoot, null, null);
 
     if (global._reactBondHotReload === true) {
