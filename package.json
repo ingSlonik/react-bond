@@ -1,13 +1,14 @@
 {
   "name": "react-bond",
-  "version": "0.3.1",
+  "version": "0.4.0",
   "description": "react-bond is a library for building cross-platform lightweight desktop apps with the React.",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "bin": {
     "react-bond": "lib/scripts/createApp.js",
     "create-react-bond-app": "lib/scripts/createApp.js",
-    "react-bond-hot": "./lib/scripts/hot.js"
+    "react-bond-hot": "./lib/scripts/hot.js",
+    "react-bond-build": "./lib/scripts/build.js"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -15,7 +16,7 @@
     "example": "npm run build:scripts && node lib/scripts/hot.js",
     "build": "npm run build:scripts && npm run build:copy-types && tsc src/index.ts --outDir lib --target es2020 --module commonjs --esModuleInterop true --jsx react --sourceMap true --declaration true",
     "build:copy-types": "cp -f src/types.d.ts lib/types.d.ts",
-    "build:scripts": "tsc src/scripts/hot.ts src/scripts/createApp.ts --outDir lib/scripts --noImplicitUseStrict --target es2020 --module commonjs --esModuleInterop true",
+    "build:scripts": "tsc src/scripts/hot.ts src/scripts/build.ts src/scripts/createApp.ts --outDir lib/scripts --noImplicitUseStrict --target es2020 --module commonjs --esModuleInterop true",
     "prepublish": "npm run build"
   },
   "repository": {

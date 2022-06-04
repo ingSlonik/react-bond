@@ -18,6 +18,7 @@ console.log(`✓ Folder "${name}" created.`);
 writeFileSync(resolve(appPath, "package.json"), JSON.stringify({
     name,
     version: "0.1.0",
+    "main": "lib/index.js",
     "description": "My application based on react-bond.",
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
