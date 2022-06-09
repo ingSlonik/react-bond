@@ -23,7 +23,7 @@ writeFileSync(resolve(appPath, "package.json"), JSON.stringify({
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
         "start": "react-bond-hot src/index.tsx",
-        "build": "tsc",
+        "build": "tsc && react-bond-build --include package.json lib assets",
     },
     "author": "",
     "license": "MIT",
