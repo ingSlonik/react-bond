@@ -4,6 +4,16 @@ import { resolve, relative, win32 } from "path";
 import { execSync } from "child_process";
 import { existsSync, mkdirSync, writeFileSync, appendFileSync, rmSync, readdirSync, copyFileSync, lstatSync, readFileSync } from "fs";
 
+function ok(text: string) {
+    console.log("\x1b[32m\x1b[1m", "✓", "\x1b[0m", text);
+}
+function dash(text: string) {
+    console.log("\x1b[33m\x1b[1m", "-", "\x1b[0m", text);
+}
+function bold(text: string) {
+    console.log("\x1b[1m", text, "\x1b[0m");
+}
+
 function getArgvValues(name: string): string[] {
     let is = false;
     let values: string[] = [];
@@ -31,7 +41,7 @@ function copy(pathFrom: string, pathTo: string) {
     }
 }
 
-console.log(`Building react-bond app for all OS 🔥🔥🔥`);
+bold(`Building react-bond app for all OS 🔥🔥🔥`);
 
 const pwdPath = resolve(process.cwd());
 const buildPath = resolve(pwdPath, "build");
@@ -39,22 +49,19 @@ const include = getArgvValues("--include");
 
 if (existsSync(buildPath)) {
     rmSync(buildPath, { recursive: true, force: true });
-    console.log(`✓ Old build removed.`);
+    ok(`Old build removed.`);
 }
 
 mkdirSync(buildPath);
-console.log(`✓ Folder build created.`);
+ok(`Folder build created.`);
 
-console.log(`- Copy include files and folders...`);
-include.forEach(name => {
-    console.log(`  - Copy ${resolve(pwdPath, name)} -> ${resolve(buildPath, name)}...`);
-    copy(resolve(pwdPath, name), resolve(buildPath, name));
-});
-console.log(`✓ All include files copied.`);
+dash(`Copy include files and folders (${include.join(", ")})...`);
+include.forEach(name => copy(resolve(pwdPath, name), resolve(buildPath, name)));
+ok(`All include files copied.`);
 
-console.log(`Installing production dependencies...`);
-execSync(`cd build && npm install --production`, { stdio: "inherit" });
-console.log(`✓ All production dependencies installed.`);
+dash(`Installing production dependencies...`);
+execSync(`cd build && npm install --production --ignore-scripts`, { stdio: "inherit" });
+ok(`All production dependencies installed.`);
 
 
 const packageString = readFileSync(resolve(buildPath, "package.json"), "utf-8");
@@ -62,16 +69,23 @@ const packageJSON = JSON.parse(packageString);
 if (typeof packageJSON?.main !== "string") throw new Error("Main file in pacakge.json not found.");
 
 const { main } = packageJSON;
-console.log(`✓ Fund main file in package.json "${main}".`);
+ok(`Found main file in package.json "${main}".`);
 
+const runLinuxAndMacPath = resolve(buildPath, "app");
 const linuxAndMacPath = "./" + relative(buildPath, resolve(buildPath, main));
-writeFileSync(resolve(buildPath, "run"), `#!/usr/bin/env node
+writeFileSync(runLinuxAndMacPath, `#!/usr/bin/env node
 require(${JSON.stringify(linuxAndMacPath)});
 `, "utf-8");
-execSync(`chmod 777 ${resolve(buildPath, "run")}`, { stdio: "inherit" });
-console.log(`✓ Run file for Mac and Linux created with "${JSON.stringify(linuxAndMacPath)}" entry file.`);
+execSync(`chmod +x ${runLinuxAndMacPath}`, { stdio: "inherit" });
+writeFileSync(runLinuxAndMacPath + "Bash", `#!/bin/bash
+node ${resolve(buildPath, main)}
+`, "utf-8");
+execSync(`chmod +x ${runLinuxAndMacPath + "Bash"}`, { stdio: "inherit" });
+ok(`Run file for Mac and Linux created with ${JSON.stringify(linuxAndMacPath)} entry file.`);
 
 const winPath = win32.relative(buildPath, resolve(buildPath, main));
-writeFileSync(resolve(buildPath, "run.bat"), `node ${winPath}
+writeFileSync(resolve(buildPath, "app.bat"), `@echo off
+node ${winPath}
+exit
 `, "utf-8");
-console.log(`✓ Run file for Window created with "${JSON.stringify(winPath)}" entry file.`);
+ok(`Run file for Window created with ${JSON.stringify(winPath)} entry file.`);
