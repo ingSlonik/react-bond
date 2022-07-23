@@ -36,7 +36,7 @@
   },
   "homepage": "https://github.com/ingSlonik/react-bond#readme",
   "dependencies": {
-    "native-webview": "^0.4.1",
+    "native-webview": "^0.5.0",
     "react": "^18.1.0",
     "react-reconciler": "^0.28.0"
   },

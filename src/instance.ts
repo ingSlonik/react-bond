@@ -14,10 +14,10 @@ export function createWindowInstance(type: "window", props: WindowProps, rootCon
         children: [],
     };
 
-    window.run().then(() => {
+    window.onLoad.then(nwv => nwv.onClose().then(() => {
         // TODO: remove children windows
         removeWindowToContainer(rootContainer, windowInstance, onStateEnd);
-    });
+    }));
 
     return windowInstance;
 }
@@ -95,7 +95,8 @@ export function appendInstance(instance: Instance) {
 
 export function updateInstance(instance: Instance, newProps: Partial<Props>, /* rootContainer: Container*/) {
     if (instance.type === "window") {
-        updateWindow(instance.window.nwv, newProps as WindowProps);
+        if (instance.window.nwv)
+            updateWindow(instance.window.nwv, newProps as WindowProps);
     } else {
         const window = getWindowInstance(instance);
         const id = instance.id;

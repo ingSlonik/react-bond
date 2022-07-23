@@ -1,11 +1,13 @@
 import { resolve } from "path";
-import NativeWebView from "native-webview";
+import OpenWebView from "native-webview";
 
 import React, { ReactNode } from "react";
 
 import { DevelopmentErrorBoundary } from "./ErrorBoundary";
 
 import { Type, Props } from "../types";
+
+type NativeWebView = Awaited<ReturnType<typeof OpenWebView>>;
 
 // ------------ Component -------------
 
@@ -63,70 +65,75 @@ const dropListener: { [id: string]: (paths: string[]) => void } = {};
 export type WindowType = {
     loaded: boolean,
     loadingQueue: string[],
-    nwv: NativeWebView,
-    run: () => Promise<void>,
+    nwv: null | NativeWebView,
+    onLoad: Promise<NativeWebView>,
 };
 
 export function getWindow(
     props: Omit<WindowProps, "children">
 ): WindowType {
-    const nwv = new NativeWebView(
-        {
-            title: props.title,
-            innerSize: { width: props.width, height: props.height },
-            getPath: path => {
-                if (path === "index.html") {
-                    return resolve(__dirname, "..", "..", "webview", "index.html");
-                } else {
-                    if (path.startsWith("file?src=")) {
-                        return resolve(process.cwd(), decodeURIComponent(path.substring(9)));
-                    } else {
-                        // user custom path
-                        return path;
-                    }
-                }
-            },
-            onDrop: (drop) => {
-                if (drop.type === "fileDropDropped") {
-                    Object.values(dropListener).forEach(listener => listener(drop.paths));
-                }
-            },
-            onMessage: (message: MessageToBackend) => {
-                // console.log(message);
-                if (message.type === "loaded") {
-                    window.loaded = true;
-
-                    updateWindow(nwv, props);
-
-                    nwv.eval(applyMessage.toString())
-                    nwv.eval(append.toString());
-                    nwv.eval(update.toString());
-                    nwv.eval(remove.toString());
-
-                    window.loadingQueue.forEach(js => nwv.eval(js));
-                    window.loadingQueue = [];
-
-                } else if (message.type === "event") {
-                    const listener = eventListener[message.id]?.[message.eventType];
-                    if (listener) {
-                        listener(message.value);
-                    } else {
-                        throw new Error("Called not set listener.");
-                    }
-                } else if (message.type === "message") {
-                    console.log("Message:", message.message);
-                } else {
-                    throw message.error;
-                }
-            }
-        },
-    );
-
-    const window = {
+    const window: WindowType = {
         loaded: false,
         loadingQueue: [],
-        nwv,
-        run: nwv.run.bind(nwv),
+        nwv: null,
+        onLoad: new Promise(async onLoad => {
+            const nwv = await OpenWebView({
+                title: props.title,
+                innerSize: { width: props.width, height: props.height },
+                getPath: path => {
+                    if (path === "index.html") {
+                        return resolve(__dirname, "..", "..", "webview", "index.html");
+                    } else {
+                        if (path.startsWith("file?src=")) {
+                            return resolve(process.cwd(), decodeURIComponent(path.substring(9)));
+                        } else {
+                            // user custom path
+                            return path;
+                        }
+                    }
+                },
+                onDrop: (drop) => {
+                    if (drop.type === "fileDropDropped") {
+                        Object.values(dropListener).forEach(listener => listener(drop.paths));
+                    }
+                },
+                onMessage: (message: MessageToBackend) => {
+                    // console.log(message);
+                    if (message.type === "loaded") {
+                        const nwv = window.nwv;
+                        if (nwv === null) throw new Error("Native WebView is not loaded but sent a loaded.");
+
+                        window.loaded = true;
+
+                        updateWindow(nwv, props);
+
+                        nwv.eval(applyMessage.toString())
+                        nwv.eval(append.toString());
+                        nwv.eval(update.toString());
+                        nwv.eval(remove.toString());
+
+                        window.loadingQueue.forEach(js => nwv.eval(js));
+                        window.loadingQueue = [];
+
+                    } else if (message.type === "event") {
+                        const listener = eventListener[message.id]?.[message.eventType];
+                        if (listener) {
+                            listener(message.value);
+                        } else {
+                            throw new Error("Called not set listener.");
+                        }
+                    } else if (message.type === "message") {
+                        console.log("Message:", message.message);
+                    } else {
+                        throw message.error;
+                    }
+                }
+            });
+
+            window.nwv = nwv;
+
+            onLoad(nwv);
+        }),
     };
 
     return window;
@@ -188,7 +195,7 @@ export function getFrontendProps(id: string, props: Props): FrontendProps {
 export function appendElement(window: WindowType, parentId: string, id: string, tagName: Type, props: Props) {
     const message: MessageToFrontend = { type: "append", parentId, id, tagName, props: getFrontendProps(id, props) };
     const js = `applyMessage(${JSON.stringify(message)});`;
-    if (window.loaded) {
+    if (window.nwv && window.loaded) {
         window.nwv.eval(js);
     } else {
         window.loadingQueue.push(js);
@@ -198,7 +205,7 @@ export function appendElement(window: WindowType, parentId: string, id: string, 
 export function updateElement(window: WindowType, id: string, props: Props) {
     const message: MessageToFrontend = { type: "update", id, props: getFrontendProps(id, props) };
     const js = `applyMessage(${JSON.stringify(message)});`;
-    if (window.loaded) {
+    if (window.nwv && window.loaded) {
         window.nwv.eval(js);
     } else {
         window.loadingQueue.push(js);
@@ -208,7 +215,7 @@ export function updateElement(window: WindowType, id: string, props: Props) {
 export function removeElement(window: WindowType, id: string) {
     const message: MessageToFrontend = { type: "remove", id };
     const js = `applyMessage(${JSON.stringify(message)});`;
-    if (window.loaded) {
+    if (window.nwv && window.loaded) {
         window.nwv.eval(js);
     } else {
         window.loadingQueue.push(js);
